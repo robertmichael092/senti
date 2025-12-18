@@ -1,14 +1,12 @@
 let db;
 
 function openDB() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const req = indexedDB.open("senti-db", 1);
-
     req.onupgradeneeded = e => {
       db = e.target.result;
       db.createObjectStore("entries", { keyPath: "id", autoIncrement: true });
     };
-
     req.onsuccess = e => {
       db = e.target.result;
       resolve();
@@ -30,4 +28,4 @@ function getAllEntries() {
     const req = tx.objectStore("entries").getAll();
     req.onsuccess = () => resolve(req.result);
   });
-}
+      }

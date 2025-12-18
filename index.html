@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Senti</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,23 +17,23 @@
 <section id="home" class="screen">
   <div class="card">
     <p class="muted">This Month</p>
-    <h2 id="balance">0</h2>
+    <h2 id="homeBalance">0</h2>
 
     <div class="row">
-      <div id="openIncome" class="tap">
+      <div>
         <span class="muted">Money In</span><br>
-        <strong class="green" id="income">0</strong>
+        <strong class="green" id="homeIn">0</strong>
       </div>
-      <div id="openExpense" class="tap">
+      <div>
         <span class="muted">Money Out</span><br>
-        <strong class="red" id="expense">0</strong>
+        <strong class="red" id="homeOut">0</strong>
       </div>
     </div>
   </div>
 
   <div class="card">
     <h3>Where your money went</h3>
-    <ul id="categories"></ul>
+    <ul id="homeCategories"></ul>
   </div>
 
   <button id="addBtn" class="primary">+ Add Entry</button>
@@ -41,35 +41,58 @@
 
 <!-- ADD ENTRY -->
 <section id="add" class="screen hidden">
-  <h2>Add Entry</h2>
+  <div class="card">
+    <h2>Add Entry</h2>
 
-  <div class="segmented">
-    <button id="typeOut" class="active">Out</button>
-    <button id="typeIn">In</button>
+    <div class="segmented">
+      <button id="outBtn" class="active">Out</button>
+      <button id="inBtn">In</button>
+    </div>
+
+    <input id="amount" type="number" placeholder="Amount">
+    <input id="category" placeholder="Category (e.g. Chakula)">
+    <input id="note" placeholder="Note (optional)">
+
+    <button id="saveBtn" class="primary">Save</button>
+    <button id="cancelBtn" class="ghost">Cancel</button>
   </div>
-
-  <input id="amount" type="number" placeholder="Amount">
-  <input id="category" placeholder="Category">
-  <input id="note" placeholder="Note (optional)">
-
-  <button id="saveBtn" class="primary">Save</button>
-  <button id="cancelBtn" class="ghost">Cancel</button>
 </section>
 
 <!-- YEAR -->
 <section id="year" class="screen hidden">
   <div class="card">
-    <h3>This Year</h3>
-    <ul id="months"></ul>
-    <button id="backHome" class="ghost">Back</button>
+    <h2>This Year</h2>
+    <ul id="yearMonths"></ul>
+    <button id="backHomeBtn" class="ghost">Back</button>
   </div>
 </section>
 
-<!-- TRANSACTIONS -->
-<section id="transactions" class="screen hidden">
-  <h2 id="txTitle"></h2>
-  <ul id="txList"></ul>
-  <button id="txBack" class="ghost">Back</button>
+<!-- MONTH -->
+<section id="month" class="screen hidden">
+  <div class="card">
+    <h2 id="monthTitle"></h2>
+
+    <p class="muted">Balance</p>
+    <h3 id="monthBalance">0</h3>
+
+    <div class="row">
+      <div>
+        <span class="muted">Money In</span><br>
+        <strong class="green" id="monthIn">0</strong>
+      </div>
+      <div>
+        <span class="muted">Money Out</span><br>
+        <strong class="red" id="monthOut">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Where your money went</h3>
+    <ul id="monthCategories"></ul>
+  </div>
+
+  <button id="backYearBtn" class="ghost">Back to Year</button>
 </section>
 
 <script src="db.js"></script>

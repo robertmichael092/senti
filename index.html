@@ -1,20 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Senti</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Senti</title>
+
+<style>
+* { box-sizing: border-box; font-family: system-ui, sans-serif; }
+body { margin: 0; background: #f7f8f6; padding: 16px; }
+.hidden { display: none; }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 { margin: 0; }
+
+.screen { max-width: 480px; margin: auto; }
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tap-box {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tap-box:active { background: #f0f0f0; }
+
+.primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: #1e7f5c;
+  color: white;
+  border: none;
+  font-size: 16px;
+}
+
+.ghost {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  background: #eee;
+  border: none;
+}
+
+.pill {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eee;
+  border: none;
+}
+
+.segmented {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.segmented button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #eee;
+}
+
+.segmented .active {
+  background: #1e7f5c;
+  color: white;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.green { color: #1e7f5c; }
+.red { color: #c65a4a; }
+.muted { color: #777; }
+
+.view-link {
+  color: #1e7f5c;
+  font-weight: 600;
+  cursor: pointer;
+  padding-top: 8px;
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <h1>Senti</h1>
-  <button id="yearBtn">Year</button>
+  <button id="goYear" class="pill">Year</button>
 </header>
 
-<main id="app"></main>
+<!-- HOME -->
+<section id="home" class="screen">
+  <div class="card">
+    <p class="muted">This Month</p>
+    <h2 id="homeBalance">0</h2>
 
-<script src="app.js"></script>
+    <div class="row">
+      <div class="tap-box" id="homeInTap">
+        <span class="muted">Money In</span><br>
+        <strong class="green" id="homeIn">0</strong>
+      </div>
+      <div class="tap-box" id="homeOutTap">
+        <span class="muted">Money Out</span><br>
+        <strong class="red" id="homeOut">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Where your money went</h3>
+    <ul id="homeCats"></ul>
+    <div id="toggleCats" class="view-link hidden">View all categories</div>
+  </div>
+
+  <button id="goAdd" class="primary">+ Add Entry</button>
+</section>
+
+<!-- ADD -->
+<section id="add" class="screen hidden">
+  <div class="card">
+    <h2>Add Entry</h2>
+
+    <div class="segmented">
+      <button id="typeOut" class="active">Out</button>
+      <button id="typeIn">In</button>
+    </div>
+
+    <input id="amount" inputmode="numeric" placeholder="Amount">
+    <input id="category" placeholder="Category">
+    <input id="note" placeholder="Note (optional)">
+
+    <button id="save" class="primary">Save</button>
+    <button id="cancel" class="ghost">Cancel</button>
+  </div>
+</section>
+
+<!-- YEAR -->
+<section id="year" class="screen hidden">
+  <div class="card">
+    <h2>This Year</h2>
+    <ul id="yearList"></ul>
+    <button id="backHome" class="ghost">Back</button>
+  </div>
+</section>
+
+<!-- MONTH -->
+<section id="month" class="screen hidden">
+  <div class="card">
+    <h2 id="monthTitle"></h2>
+    <p class="muted">Balance</p>
+    <h3 id="monthBalance">0</h3>
+
+    <div class="row">
+      <div class="tap-box" id="monthInTap">
+        <span class="muted">Money In</span><br>
+        <strong class="green" id="monthIn">0</strong>
+      </div>
+      <div class="tap-box" id="monthOutTap">
+        <span class="muted">Money Out</span><br>
+        <strong class="red" id="monthOut">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Where your money went</h3>
+    <ul id="monthCats"></ul>
+  </div>
+
+  <button id="backYear" class="ghost">Back to Year</button>
+</section>
+
+<!-- LIST -->
+<section id="list" class="screen hidden">
+  <div class="card">
+    <h2 id="listTitle"></h2>
+    <ul id="listItems"></ul>
+    <button id="backFromList" class="ghost">Back</button>
+  </div>
+</section>
+
+<script>
+let entries = JSON.parse(localStorage.getItem("senti") || "[]");
+let entryType = "out";
+let catsExpanded = false;
+let currentMonthKey = null;
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function monthKey(d) {
+  return d.getFullYear() + "-" + d.getMonth();
+}
+
+function monthLabel(key) {
+  const [y, m] = key.split("-");
+  return new Date(y, m).toLocaleString("default", { month: "long", year: "numeric" });
+}
+
+/* HOME */
+function renderHome() {
+  const now = new Date();
+  let inc = 0, out = 0, cats = {};
+
+  entries.forEach(e => {
+    const d = new Date(e.date);
+    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+      if (e.type === "in") inc += e.amount;
+      else {
+        out += e.amount;
+        cats[e.category] = (cats[e.category] || 0) + e.amount;
+      }
+    }
+  });
+
+  homeBalance.textContent = inc - out;
+  homeIn.textContent = inc;
+  homeOut.textContent = out;
+
+  const allCats = Object.entries(cats);
+  const visible = catsExpanded ? allCats : allCats.slice(0, 3);
+
+  homeCats.innerHTML = "";
+  visible.forEach(([c, v]) => {
+    homeCats.innerHTML += `<li><span>${c}</span><strong>${v}</strong></li>`;
+  });
+
+  toggleCats.classList.toggle("hidden", allCats.length <= 3);
+  toggleCats.textContent = catsExpanded ? "Show less" : "View all categories";
+}
+
+/* YEAR — FIXED */
+function renderYear() {
+  const map = {};
+
+  entries.forEach(e => {
+    const key = monthKey(new Date(e.date));
+    map[key] = map[key] || { in: 0, out: 0 };
+    map[key][e.type] += e.amount;
+  });
+
+  yearList.innerHTML = "";
+
+  Object.keys(map)
+    .sort()
+    .reverse()
+    .forEach(key => {
+      const bal = map[key].in - map[key].out;
+      yearList.innerHTML += `
+        <li onclick="openMonth('${key}')">
+          <span>${monthLabel(key)}</span>
+          <strong>${bal}</strong>
+        </li>`;
+    });
+}
+
+/* MONTH */
+function openMonth(key) {
+  currentMonthKey = key;
+  show("month");
+
+  let inc = 0, out = 0, cats = {};
+
+  entries.forEach(e => {
+    const d = new Date(e.date);
+    if (monthKey(d) === key) {
+      if (e.type === "in") inc += e.amount;
+      else {
+        out += e.amount;
+        cats[e.category] = (cats[e.category] || 0) + e.amount;
+      }
+    }
+  });
+
+  monthTitle.textContent = monthLabel(key);
+  monthBalance.textContent = inc - out;
+  monthIn.textContent = inc;
+  monthOut.textContent = out;
+
+  monthCats.innerHTML = "";
+  Object.entries(cats).forEach(([c, v]) => {
+    monthCats.innerHTML += `<li><span>${c}</span><strong>${v}</strong></li>`;
+  });
+}
+
+/* LIST */
+function openList(type) {
+  show("list");
+  listTitle.textContent = type === "in" ? "Money In" : "Money Out";
+  listItems.innerHTML = "";
+
+  entries.forEach(e => {
+    const d = new Date(e.date);
+    if (
+      e.type === type &&
+      (!currentMonthKey || monthKey(d) === currentMonthKey)
+    ) {
+      listItems.innerHTML += `<li><span>${e.category}</span><strong>${e.amount}</strong></li>`;
+    }
+  });
+}
+
+/* EVENTS */
+goAdd.onclick = () => show("add");
+cancel.onclick = () => show("home");
+goYear.onclick = () => { show("year"); renderYear(); };
+backHome.onclick = () => show("home");
+backYear.onclick = () => show("year");
+backFromList.onclick = () => show(currentMonthKey ? "month" : "home");
+
+homeInTap.onclick = () => openList("in");
+homeOutTap.onclick = () => openList("out");
+monthInTap.onclick = () => openList("in");
+monthOutTap.onclick = () => openList("out");
+
+toggleCats.onclick = () => { catsExpanded = !catsExpanded; renderHome(); };
+
+typeOut.onclick = () => {
+  entryType = "out";
+  typeOut.classList.add("active");
+  typeIn.classList.remove("active");
+};
+
+typeIn.onclick = () => {
+  entryType = "in";
+  typeIn.classList.add("active");
+  typeOut.classList.remove("active");
+};
+
+save.onclick = () => {
+  const amt = Number(amount.value);
+  if (!amt || amt <= 0) return;
+
+  entries.push({
+    type: entryType,
+    amount: amt,
+    category: category.value || "Other",
+    note: note.value || "",
+    date: new Date().toISOString()
+  });
+
+  localStorage.setItem("senti", JSON.stringify(entries));
+  amount.value = category.value = note.value = "";
+
+  currentMonthKey = null;
+  show("home");
+  renderHome();
+};
+
+renderHome();
+</script>
+
 </body>
-</html>
+  </html>

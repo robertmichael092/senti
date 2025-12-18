@@ -6,13 +6,15 @@ const monthDetail = document.getElementById("monthDetail");
 let currentType = "out";
 let showAll = false;
 
-document.querySelectorAll(".segmented button").forEach(b => {
-  b.onclick = () => {
-    document.querySelectorAll(".segmented button").forEach(x => x.classList.remove("active"));
-    b.classList.add("active");
-    currentType = b.dataset.type;
-  };
-});
+const now = new Date();
+const CURRENT_YEAR = now.getFullYear();
+const CURRENT_MONTH = now.getMonth();
+
+/* ---------- UI NAV ---------- */
+function show(screen) {
+  [home, add, year, monthDetail].forEach(s => s.classList.add("hidden"));
+  screen.classList.remove("hidden");
+}
 
 addBtn.onclick = () => show(add);
 cancelBtn.onclick = () => show(home);
@@ -20,11 +22,17 @@ yearBtn.onclick = () => { show(year); renderYear(); };
 backHome.onclick = () => show(home);
 backToYear.onclick = () => show(year);
 
-function show(screen) {
-  [home, add, year, monthDetail].forEach(s => s.classList.add("hidden"));
-  screen.classList.remove("hidden");
-}
+/* ---------- SEGMENTED CONTROL ---------- */
+document.querySelectorAll(".segmented button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".segmented button")
+      .forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    currentType = b.dataset.type;
+  };
+});
 
+/* ---------- SAVE ENTRY ---------- */
 saveBtn.onclick = async () => {
   await addEntry({
     type: currentType,
@@ -33,21 +41,29 @@ saveBtn.onclick = async () => {
     note: note.value,
     date: new Date().toISOString()
   });
+
   amount.value = category.value = note.value = "";
   show(home);
-  render();
+  renderHome(); // refresh home correctly
 };
 
-async function render() {
+/* ---------- HOME (THIS MONTH) ---------- */
+async function renderHome() {
   const entries = await getAllEntries();
-  let income = 0, expense = 0;
+
+  let income = 0;
+  let expense = 0;
   const cats = {};
 
   entries.forEach(e => {
-    if (e.type === "in") income += e.amount;
-    else {
-      expense += e.amount;
-      cats[e.category] = (cats[e.category] || 0) + e.amount;
+    const d = new Date(e.date);
+    if (d.getFullYear() === CURRENT_YEAR && d.getMonth() === CURRENT_MONTH) {
+      if (e.type === "in") {
+        income += e.amount;
+      } else {
+        expense += e.amount;
+        cats[e.category] = (cats[e.category] || 0) + e.amount;
+      }
     }
   });
 
@@ -58,76 +74,91 @@ async function render() {
   renderCategories(cats, categories);
 }
 
+/* ---------- CATEGORY LIST (COLLAPSIBLE) ---------- */
 function renderCategories(cats, el) {
   el.innerHTML = "";
-  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
-  const visible = showAll ? sorted : sorted.slice(0,3);
 
-  visible.forEach(([c,v]) => {
+  const sorted = Object.entries(cats)
+    .sort((a, b) => b[1] - a[1]);
+
+  const visible = showAll ? sorted : sorted.slice(0, 3);
+
+  visible.forEach(([c, v]) => {
     const li = document.createElement("li");
     li.innerHTML = `<span>${c}</span><strong>${v}</strong>`;
     el.appendChild(li);
   });
 
   if (sorted.length > 3) {
-    const t = document.createElement("button");
-    t.className = "toggle";
-    t.textContent = showAll ? "Show less" : "View all categories";
-    t.onclick = () => { showAll = !showAll; render(); };
-    el.appendChild(t);
+    const btn = document.createElement("button");
+    btn.className = "toggle";
+    btn.textContent = showAll ? "Show less" : "View all categories";
+    btn.onclick = () => {
+      showAll = !showAll;
+      renderHome();
+    };
+    el.appendChild(btn);
   }
 }
 
+/* ---------- YEAR VIEW ---------- */
 async function renderYear() {
   const entries = await getAllEntries();
   const map = {};
 
   entries.forEach(e => {
     const d = new Date(e.date);
-    const k = `${d.getFullYear()}-${d.getMonth()}`;
-    map[k] ??= { in:0, out:0 };
-    map[k][e.type] += e.amount;
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    map[key] ??= { in: 0, out: 0 };
+    map[key][e.type] += e.amount;
   });
 
   months.innerHTML = "";
-  Object.entries(map).forEach(([k,v]) => {
-    const [y,m] = k.split("-");
-    const name = new Date(y,m).toLocaleString("default",{month:"long"});
+
+  Object.entries(map).forEach(([k, v]) => {
+    const [y, m] = k.split("-");
+    const name = new Date(y, m).toLocaleString("default", { month: "long" });
+
     const li = document.createElement("li");
     li.innerHTML = `<span>${name}</span><strong>${v.in - v.out}</strong>`;
-    li.onclick = () => openMonth(k, name);
+    li.onclick = () => openMonth(Number(y), Number(m), name);
     months.appendChild(li);
   });
 }
 
-async function openMonth(key, name) {
+/* ---------- MONTH DETAIL ---------- */
+async function openMonth(year, month, name) {
   show(monthDetail);
-  const entries = await getAllEntries();
-  let inc=0, out=0;
-  const cats={};
 
-  entries.forEach(e=>{
-    const d=new Date(e.date);
-    if(`${d.getFullYear()}-${d.getMonth()}`===key){
-      if(e.type==="in") inc+=e.amount;
-      else{
-        out+=e.amount;
-        cats[e.category]=(cats[e.category]||0)+e.amount;
+  const entries = await getAllEntries();
+  let income = 0;
+  let expense = 0;
+  const cats = {};
+
+  entries.forEach(e => {
+    const d = new Date(e.date);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      if (e.type === "in") {
+        income += e.amount;
+      } else {
+        expense += e.amount;
+        cats[e.category] = (cats[e.category] || 0) + e.amount;
       }
     }
   });
 
-  monthTitle.textContent=name;
-  monthBalance.textContent=inc-out;
-  monthIn.textContent=inc;
-  monthOut.textContent=out;
+  monthTitle.textContent = name;
+  monthBalance.textContent = income - expense;
+  monthIn.textContent = income;
+  monthOut.textContent = expense;
 
-  monthCategories.innerHTML="";
-  Object.entries(cats).forEach(([c,v])=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<span>${c}</span><strong>${v}</strong>`;
+  monthCategories.innerHTML = "";
+  Object.entries(cats).forEach(([c, v]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${c}</span><strong>${v}</strong>`;
     monthCategories.appendChild(li);
   });
 }
 
-openDB().then(render);
+/* ---------- INIT ---------- */
+openDB().then(renderHome);

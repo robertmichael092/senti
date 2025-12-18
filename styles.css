@@ -1,43 +1,111 @@
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #f7f8f6;
-  color: #1c1c1c;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #F7F8F6;
+  color: #1C1C1C;
 }
 
-header {
+.topbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 16px;
-  background: #ffffff;
 }
 
 main {
   padding: 16px;
 }
 
-h1, h2 {
-  margin: 0 0 12px;
+.screen {
+  display: block;
 }
 
-.summary {
-  display: flex;
-  gap: 24px;
+.hidden {
+  display: none;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 16px;
   margin-bottom: 16px;
 }
 
+.balance-card h2 {
+  font-size: 32px;
+  margin: 8px 0;
+}
+
+.label {
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.green { color: #1E7F5C; }
+.red { color: #C65A4A; }
+.muted { color: #6B7280; }
+
 button {
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
-  margin-top: 8px;
+  border-radius: 14px;
+  border: none;
+}
+
+button.full {
+  width: 100%;
 }
 
 .primary {
   background: #1E7F5C;
   color: white;
-  border: none;
 }
 
-ul {
-  padding-left: 16px;
+.ghost {
+  background: #EEE;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid #DDD;
+  font-size: 16px;
+}
+
+.segmented {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.segmented button {
+  flex: 1;
+  background: #EEE;
+}
+
+.segmented .active {
+  background: #1E7F5C;
+  color: white;
+}
+
+.category-list,
+.month-list {
+  list-style: none;
+  padding: 0;
+}
+
+.category-list li,
+.month-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #EEE;
 }

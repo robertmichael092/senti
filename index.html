@@ -1,1 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Senti</title>
 
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#1E7F5C" />
+</head>
+<body>
+
+<header>
+  <h1>Senti</h1>
+  <button id="yearBtn">Year</button>
+</header>
+
+<main id="app">
+  <!-- Home screen -->
+  <section id="home">
+    <p id="monthLabel"></p>
+
+    <h2 id="balance">0</h2>
+
+    <div class="summary">
+      <div>
+        <span>Money In</span>
+        <strong id="income">0</strong>
+      </div>
+      <div>
+        <span>Money Out</span>
+        <strong id="expense">0</strong>
+      </div>
+    </div>
+
+    <h3>Where your money went</h3>
+    <ul id="categories"></ul>
+
+    <button class="primary" id="addBtn">+ Add Entry</button>
+  </section>
+
+  <!-- Add Entry screen -->
+  <section id="add" hidden>
+    <h2>Add Entry</h2>
+
+    <select id="type">
+      <option value="out">Out</option>
+      <option value="in">In</option>
+    </select>
+
+    <input id="amount" type="number" placeholder="Amount" />
+    <input id="category" type="text" placeholder="Category" />
+    <input id="note" type="text" placeholder="Note (optional)" />
+
+    <button class="primary" id="saveBtn">Save</button>
+    <button id="cancelBtn">Cancel</button>
+  </section>
+
+  <!-- Year screen -->
+  <section id="year" hidden>
+    <h2>This Year</h2>
+    <ul id="months"></ul>
+    <button id="backHome">This Month</button>
+  </section>
+</main>
+
+<script src="db.js"></script>
+<script src="app.js"></script>
+</body>
+  </html>

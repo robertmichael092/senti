@@ -23,7 +23,16 @@ h1 { margin: 0; }
   padding: 16px; margin-bottom: 16px;
 }
 
-.row { display: flex; justify-content: space-between; }
+.row { display: flex; justify-content: space-between; gap: 12px; }
+
+.tap-box {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tap-box:active { background: #f0f0f0; }
 
 .primary {
   width: 100%; padding: 14px; border-radius: 14px;
@@ -61,7 +70,13 @@ li {
 .green { color: #1e7f5c; }
 .red { color: #c65a4a; }
 .muted { color: #777; }
-.tap { cursor: pointer; }
+
+.view-link {
+  color: #1e7f5c;
+  font-weight: 600;
+  cursor: pointer;
+  padding-top: 8px;
+}
 </style>
 </head>
 
@@ -79,11 +94,11 @@ li {
     <h2 id="homeBalance">0</h2>
 
     <div class="row">
-      <div class="tap" id="homeInTap">
+      <div class="tap-box" id="homeInTap">
         <span class="muted">Money In</span><br>
         <strong class="green" id="homeIn">0</strong>
       </div>
-      <div class="tap" id="homeOutTap">
+      <div class="tap-box" id="homeOutTap">
         <span class="muted">Money Out</span><br>
         <strong class="red" id="homeOut">0</strong>
       </div>
@@ -93,6 +108,7 @@ li {
   <div class="card">
     <h3>Where your money went</h3>
     <ul id="homeCats"></ul>
+    <div id="toggleCats" class="view-link hidden">View all categories</div>
   </div>
 
   <button id="goAdd" class="primary">+ Add Entry</button>
@@ -126,33 +142,6 @@ li {
   </div>
 </section>
 
-<!-- MONTH -->
-<section id="month" class="screen hidden">
-  <div class="card">
-    <h2 id="monthTitle"></h2>
-    <p class="muted">Balance</p>
-    <h3 id="monthBalance">0</h3>
-
-    <div class="row">
-      <div class="tap" id="monthInTap">
-        <span class="muted">Money In</span><br>
-        <strong class="green" id="monthIn">0</strong>
-      </div>
-      <div class="tap" id="monthOutTap">
-        <span class="muted">Money Out</span><br>
-        <strong class="red" id="monthOut">0</strong>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Where your money went</h3>
-    <ul id="monthCats"></ul>
-  </div>
-
-  <button id="backYear" class="ghost">Back to Year</button>
-</section>
-
 <!-- LIST -->
 <section id="list" class="screen hidden">
   <div class="card">
@@ -163,25 +152,14 @@ li {
 </section>
 
 <script>
-/* ---------- STATE ---------- */
-let view = { screen: "home", year: null, month: null, type: null };
-let entries = [];
+let entries = JSON.parse(localStorage.getItem("senti") || "[]");
 let entryType = "out";
-
-/* ---------- STORAGE ---------- */
-function load() {
-  entries = JSON.parse(localStorage.getItem("senti") || "[]");
-}
-function save(e) {
-  entries.push(e);
-  localStorage.setItem("senti", JSON.stringify(entries));
-}
+let catsExpanded = false;
 
 /* ---------- NAV ---------- */
-function show(screen) {
+function show(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById(screen).classList.remove("hidden");
-  view.screen = screen;
+  document.getElementById(id).classList.remove("hidden");
 }
 
 /* ---------- HOME ---------- */
@@ -193,117 +171,88 @@ function renderHome() {
     const d=new Date(e.date);
     if(d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear()){
       if(e.type==="in") inc+=e.amount;
-      else{
+      else {
         out+=e.amount;
         cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
   });
 
-  homeBalance.textContent=inc-out;
-  homeIn.textContent=inc;
-  homeOut.textContent=out;
+  homeBalance.textContent = inc - out;
+  homeIn.textContent = inc;
+  homeOut.textContent = out;
 
-  homeCats.innerHTML="";
-  Object.entries(cats).forEach(([c,v])=>{
-    homeCats.innerHTML+=`<li><span>${c}</span><strong>${v}</strong></li>`;
-  });
-}
+  const allCats = Object.entries(cats);
+  const visibleCats = catsExpanded ? allCats : allCats.slice(0,3);
 
-/* ---------- YEAR ---------- */
-function renderYear(){
-  const map={};
-  entries.forEach(e=>{
-    const d=new Date(e.date);
-    const k=`${d.getFullYear()}-${d.getMonth()}`;
-    map[k]??={in:0,out:0};
-    map[k][e.type]+=e.amount;
+  homeCats.innerHTML = "";
+  visibleCats.forEach(([c,v])=>{
+    homeCats.innerHTML += `<li><span>${c}</span><strong>${v}</strong></li>`;
   });
 
-  yearList.innerHTML="";
-  Object.entries(map).forEach(([k,v])=>{
-    const [y,m]=k.split("-");
-    const label=new Date(y,m).toLocaleString("default",{month:"long"});
-    yearList.innerHTML+=`<li onclick="openMonth(${y},${m})"><span>${label}</span><strong>${v.in-v.out}</strong></li>`;
-  });
-}
-
-/* ---------- MONTH ---------- */
-function openMonth(y,m){
-  view.year=y; view.month=m;
-  show("month");
-
-  let inc=0,out=0,cats={};
-  entries.forEach(e=>{
-    const d=new Date(e.date);
-    if(d.getFullYear()===y && d.getMonth()===m){
-      if(e.type==="in") inc+=e.amount;
-      else{
-        out+=e.amount;
-        cats[e.category]=(cats[e.category]||0)+e.amount;
-      }
-    }
-  });
-
-  monthTitle.textContent=new Date(y,m).toLocaleString("default",{month:"long"});
-  monthBalance.textContent=inc-out;
-  monthIn.textContent=inc;
-  monthOut.textContent=out;
-
-  monthCats.innerHTML="";
-  Object.entries(cats).forEach(([c,v])=>{
-    monthCats.innerHTML+=`<li><span>${c}</span><strong>${v}</strong></li>`;
-  });
+  toggleCats.classList.toggle("hidden", allCats.length <= 3);
+  toggleCats.textContent = catsExpanded ? "Show less" : "View all categories";
 }
 
 /* ---------- LIST ---------- */
 function openList(type){
-  view.type=type;
   show("list");
+  listTitle.textContent = type === "in" ? "Money In" : "Money Out";
+  listItems.innerHTML = "";
 
-  listTitle.textContent=type==="in"?"Money In":"Money Out";
-  listItems.innerHTML="";
-
+  const now = new Date();
   entries.forEach(e=>{
     const d=new Date(e.date);
-    const matchMonth = view.month===null
-      ? d.getMonth()===new Date().getMonth()
-      : d.getMonth()===view.month && d.getFullYear()===view.year;
-
-    if(e.type===type && matchMonth){
-      listItems.innerHTML+=`<li><span>${e.category}</span><strong>${e.amount}</strong></li>`;
+    if(e.type===type && d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear()){
+      listItems.innerHTML += `<li><span>${e.category}</span><strong>${e.amount}</strong></li>`;
     }
   });
 }
 
 /* ---------- EVENTS ---------- */
-goAdd.onclick=()=>show("add");
-cancel.onclick=()=>show("home");
-goYear.onclick=()=>{show("year");renderYear();};
-backHome.onclick=()=>show("home");
-backYear.onclick=()=>show("year");
-backFromList.onclick=()=>show(view.month===null?"home":"month");
+goAdd.onclick = ()=>show("add");
+cancel.onclick = ()=>show("home");
+goYear.onclick = ()=>show("year");
+backHome.onclick = ()=>show("home");
+backFromList.onclick = ()=>show("home");
 
-homeInTap.onclick=()=>openList("in");
-homeOutTap.onclick=()=>openList("out");
-monthInTap.onclick=()=>openList("in");
-monthOutTap.onclick=()=>openList("out");
+homeInTap.onclick = ()=>openList("in");
+homeOutTap.onclick = ()=>openList("out");
 
-typeOut.onclick=()=>{entryType="out";typeOut.classList.add("active");typeIn.classList.remove("active");};
-typeIn.onclick=()=>{entryType="in";typeIn.classList.add("active");typeOut.classList.remove("active");};
+toggleCats.onclick = ()=>{
+  catsExpanded = !catsExpanded;
+  renderHome();
+};
 
-save.onclick=()=>{
+typeOut.onclick = ()=>{
+  entryType="out";
+  typeOut.classList.add("active");
+  typeIn.classList.remove("active");
+};
+typeIn.onclick = ()=>{
+  entryType="in";
+  typeIn.classList.add("active");
+  typeOut.classList.remove("active");
+};
+
+save.onclick = ()=>{
   if(!amount.value) return;
-  save({type:entryType,amount:+amount.value,category:category.value||"Other",note:note.value||"",date:new Date().toISOString()});
-  amount.value=category.value=note.value="";
+  entries.push({
+    type: entryType,
+    amount: +amount.value,
+    category: category.value || "Other",
+    note: note.value || "",
+    date: new Date().toISOString()
+  });
+  localStorage.setItem("senti", JSON.stringify(entries));
+  amount.value = category.value = note.value = "";
   show("home");
   renderHome();
 };
 
 /* ---------- INIT ---------- */
-load();
 renderHome();
 </script>
 
 </body>
-  </html>
+</html>

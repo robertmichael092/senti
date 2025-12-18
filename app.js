@@ -1,175 +1,149 @@
-// ---------- SCREEN REFERENCES ----------
-const home = document.getElementById("home");
-const add = document.getElementById("add");
-const year = document.getElementById("year");
-const month = document.getElementById("month");
-
-// ---------- BUTTONS ----------
-const addBtn = document.getElementById("addBtn");
-const cancelBtn = document.getElementById("cancelBtn");
+const app = document.getElementById("app");
 const yearBtn = document.getElementById("yearBtn");
-const backHomeBtn = document.getElementById("backHomeBtn");
-const backYearBtn = document.getElementById("backYearBtn");
 
-const outBtn = document.getElementById("outBtn");
-const inBtn = document.getElementById("inBtn");
-const saveBtn = document.getElementById("saveBtn");
+const today = new Date();
+const currentMonthKey = monthKey(today);
 
-// ---------- INPUTS ----------
-const amount = document.getElementById("amount");
-const category = document.getElementById("category");
-const note = document.getElementById("note");
-
-// ---------- HOME DISPLAY ----------
-const homeBalance = document.getElementById("homeBalance");
-const homeIn = document.getElementById("homeIn");
-const homeOut = document.getElementById("homeOut");
-const homeCategories = document.getElementById("homeCategories");
-
-// ---------- YEAR / MONTH ----------
-const yearMonths = document.getElementById("yearMonths");
-const monthTitle = document.getElementById("monthTitle");
-const monthBalance = document.getElementById("monthBalance");
-const monthIn = document.getElementById("monthIn");
-const monthOut = document.getElementById("monthOut");
-const monthCategories = document.getElementById("monthCategories");
-
-// ---------- NAVIGATION ----------
-function show(screen) {
-  [home, add, year, month].forEach(s => s.classList.add("hidden"));
-  screen.classList.remove("hidden");
+function loadEntries() {
+  return JSON.parse(localStorage.getItem("entries") || "[]");
 }
 
-// ---------- ENTRY TYPE ----------
-let entryType = "out";
-
-outBtn.onclick = () => setType("out");
-inBtn.onclick = () => setType("in");
-
-function setType(type) {
-  entryType = type;
-  outBtn.classList.toggle("active", type === "out");
-  inBtn.classList.toggle("active", type === "in");
+function saveEntries(entries) {
+  localStorage.setItem("entries", JSON.stringify(entries));
 }
 
-// ---------- BUTTON HANDLERS ----------
-addBtn.onclick = () => show(add);
-cancelBtn.onclick = () => show(home);
-yearBtn.onclick = () => {
-  show(year);
-  renderYear();
-};
-backHomeBtn.onclick = () => show(home);
-backYearBtn.onclick = () => show(year);
+function monthKey(date) {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${d.getMonth()}`;
+}
 
-// ---------- SAVE ENTRY ----------
-saveBtn.onclick = async () => {
-  if (!amount.value) return;
+function monthLabel(key) {
+  const [y, m] = key.split("-");
+  return new Date(y, m).toLocaleString("default", { month: "long" });
+}
 
-  await addEntry({
-    type: entryType,
+/* ---------------- HOME ---------------- */
+
+function renderHome() {
+  const entries = loadEntries().filter(e => monthKey(e.date) === currentMonthKey);
+
+  let moneyIn = 0, moneyOut = 0;
+  const categories = {};
+
+  entries.forEach(e => {
+    if (e.type === "in") moneyIn += e.amount;
+    else {
+      moneyOut += e.amount;
+      categories[e.category] = (categories[e.category] || 0) + e.amount;
+    }
+  });
+
+  const balance = moneyIn - moneyOut;
+
+  app.innerHTML = `
+    <div class="card">
+      <div>This Month</div>
+      <h2>${balance}</h2>
+      <div class="row">
+        <span class="green">Money In ${moneyIn}</span>
+        <span class="red">Money Out ${moneyOut}</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Where your money went</h3>
+      ${Object.entries(categories).map(
+        ([c, a]) => `<div class="list-item"><span>${c}</span><strong>${a}</strong></div>`
+      ).join("")}
+    </div>
+
+    <button class="primary" onclick="renderAdd()">+ Add Entry</button>
+  `;
+}
+
+/* ---------------- ADD ENTRY ---------------- */
+
+function renderAdd() {
+  app.innerHTML = `
+    <div class="card">
+      <h3>Add Entry</h3>
+      <select id="type">
+        <option value="out">Out</option>
+        <option value="in">In</option>
+      </select>
+      <input id="amount" placeholder="Amount" type="number"/>
+      <input id="category" placeholder="Category"/>
+      <input id="note" placeholder="Note (optional)"/>
+      <button class="primary" onclick="saveEntry()">Save</button>
+      <button onclick="renderHome()">Cancel</button>
+    </div>
+  `;
+}
+
+function saveEntry() {
+  const entries = loadEntries();
+  entries.push({
+    type: type.value,
     amount: Number(amount.value),
     category: category.value || "Other",
     note: note.value || "",
     date: new Date().toISOString()
   });
-
-  amount.value = "";
-  category.value = "";
-  note.value = "";
-
-  show(home);
+  saveEntries(entries);
   renderHome();
-};
-
-// ---------- HOME ----------
-async function renderHome() {
-  const entries = await getAllEntries();
-  const now = new Date();
-
-  let income = 0;
-  let expense = 0;
-  const cats = {};
-
-  entries.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-      if (e.type === "in") {
-        income += e.amount;
-      } else {
-        expense += e.amount;
-        cats[e.category] = (cats[e.category] || 0) + e.amount;
-      }
-    }
-  });
-
-  homeBalance.textContent = income - expense;
-  homeIn.textContent = income;
-  homeOut.textContent = expense;
-
-  homeCategories.innerHTML = "";
-  Object.entries(cats).forEach(([c, v]) => {
-    homeCategories.innerHTML += `<li><span>${c}</span><strong>${v}</strong></li>`;
-  });
 }
 
-// ---------- YEAR ----------
-async function renderYear() {
-  const entries = await getAllEntries();
+/* ---------------- YEAR ---------------- */
+
+function renderYear() {
+  const entries = loadEntries();
   const months = {};
 
   entries.forEach(e => {
-    const d = new Date(e.date);
-    const key = `${d.getFullYear()}-${d.getMonth()}`;
-    if (!months[key]) months[key] = { in: 0, out: 0 };
-
-    months[key][e.type] += e.amount;
+    const key = monthKey(e.date);
+    months[key] = months[key] || [];
+    months[key].push(e);
   });
 
-  yearMonths.innerHTML = "";
-  Object.entries(months).forEach(([key, v]) => {
-    const [y, m] = key.split("-");
-    const label = new Date(y, m).toLocaleString("default", { month: "long" });
-
-    const li = document.createElement("li");
-    li.innerHTML = `<span>${label}</span><strong>${v.in - v.out}</strong>`;
-    li.onclick = () => openMonth(Number(y), Number(m));
-
-    yearMonths.appendChild(li);
-  });
+  app.innerHTML = `
+    <div class="card">
+      <h3>This Year</h3>
+      ${Object.keys(months).sort().reverse().map(k => {
+        const sum = months[k].reduce(
+          (t, e) => t + (e.type === "in" ? e.amount : -e.amount), 0
+        );
+        return `<div class="list-item" onclick="renderMonth('${k}')">
+          <span>${monthLabel(k)}</span>
+          <strong>${sum}</strong>
+        </div>`;
+      }).join("")}
+      <button onclick="renderHome()">Back</button>
+    </div>
+  `;
 }
 
-// ---------- MONTH ----------
-async function openMonth(y, m) {
-  show(month);
+/* ---------------- MONTH ---------------- */
 
-  const entries = await getAllEntries();
-  let income = 0;
-  let expense = 0;
-  const cats = {};
+function renderMonth(key) {
+  const entries = loadEntries().filter(e => monthKey(e.date) === key);
+  let moneyIn = 0, moneyOut = 0;
 
-  entries.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getFullYear() === y && d.getMonth() === m) {
-      if (e.type === "in") {
-        income += e.amount;
-      } else {
-        expense += e.amount;
-        cats[e.category] = (cats[e.category] || 0) + e.amount;
-      }
-    }
-  });
+  entries.forEach(e => e.type === "in" ? moneyIn += e.amount : moneyOut += e.amount);
 
-  monthTitle.textContent = new Date(y, m).toLocaleString("default", { month: "long" });
-  monthBalance.textContent = income - expense;
-  monthIn.textContent = income;
-  monthOut.textContent = expense;
-
-  monthCategories.innerHTML = "";
-  Object.entries(cats).forEach(([c, v]) => {
-    monthCategories.innerHTML += `<li><span>${c}</span><strong>${v}</strong></li>`;
-  });
+  app.innerHTML = `
+    <div class="card">
+      <h3>${monthLabel(key)}</h3>
+      <h2>${moneyIn - moneyOut}</h2>
+      <div class="row">
+        <span class="green">Money In ${moneyIn}</span>
+        <span class="red">Money Out ${moneyOut}</span>
+      </div>
+      <button onclick="renderYear()">Back to Year</button>
+    </div>
+  `;
 }
 
-// ---------- INIT ----------
-openDB().then(renderHome);
+/* ---------------- INIT ---------------- */
+
+yearBtn.onclick = renderYear;
+renderHome();

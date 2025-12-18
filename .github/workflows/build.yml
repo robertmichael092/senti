@@ -1,4 +1,4 @@
-name: Build Senti APK (Stable)
+name: Build Senti APK (Final)
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build APK using python-for-android Docker
+    - name: Build APK using Docker (non-interactive)
       run: |
         docker pull kivy/buildozer
         docker run --rm \
@@ -19,16 +19,7 @@ jobs:
           kivy/buildozer \
           bash -c "
             cd /home/buildozer/app &&
-            buildozer init || true &&
-            sed -i 's/^title = .*/title = Senti/' buildozer.spec &&
-            sed -i 's/^package.name = .*/package.name = senti/' buildozer.spec &&
-            sed -i 's/^package.domain = .*/package.domain = org.senti/' buildozer.spec &&
-            sed -i 's/^requirements = .*/requirements = python3,kivy/' buildozer.spec &&
-            sed -i 's/^android.api = .*/android.api = 31/' buildozer.spec &&
-            sed -i 's/^android.minapi = .*/android.minapi = 21/' buildozer.spec &&
-            sed -i 's/^orientation = .*/orientation = portrait/' buildozer.spec &&
-            sed -i 's|^icon.filename = .*|icon.filename = icon.png|' buildozer.spec &&
-            buildozer android debug
+            buildozer android debug --allow-root
           "
 
     - name: Upload APK

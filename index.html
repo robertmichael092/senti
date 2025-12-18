@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Senti</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -20,11 +20,11 @@
     <h2 id="balance">0</h2>
 
     <div class="row">
-      <div class="tap" id="openIncome">
+      <div id="openIncome" class="tap">
         <span class="muted">Money In</span><br>
         <strong class="green" id="income">0</strong>
       </div>
-      <div class="tap" id="openExpense">
+      <div id="openExpense" class="tap">
         <span class="muted">Money Out</span><br>
         <strong class="red" id="expense">0</strong>
       </div>
@@ -39,18 +39,18 @@
   <button id="addBtn" class="primary">+ Add Entry</button>
 </section>
 
-<!-- ADD -->
+<!-- ADD ENTRY -->
 <section id="add" class="screen hidden">
   <h2>Add Entry</h2>
 
   <div class="segmented">
-    <button data-type="out" class="active">Out</button>
-    <button data-type="in">In</button>
+    <button id="typeOut" class="active">Out</button>
+    <button id="typeIn">In</button>
   </div>
 
-  <input id="amount" placeholder="Amount" type="number" />
-  <input id="category" placeholder="Category" />
-  <input id="note" placeholder="Note (optional)" />
+  <input id="amount" type="number" placeholder="Amount">
+  <input id="category" placeholder="Category">
+  <input id="note" placeholder="Note (optional)">
 
   <button id="saveBtn" class="primary">Save</button>
   <button id="cancelBtn" class="ghost">Cancel</button>
@@ -61,7 +61,7 @@
   <div class="card">
     <h3>This Year</h3>
     <ul id="months"></ul>
-    <button id="backHome" class="ghost">Back to Home</button>
+    <button id="backHome" class="ghost">Back</button>
   </div>
 </section>
 

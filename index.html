@@ -16,7 +16,6 @@
   --muted:#777;
   --border:#e6e6e6;
 }
-
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -24,143 +23,63 @@ body{
   background:var(--bg);
   color:var(--text);
 }
-
 .hidden{display:none}
-
 header{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:16px;
 }
-
-.logo{
-  font-size:36px;
-  font-weight:800;
-}
-.logo span{
-  color:var(--green);
-}
-
-.top-actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.lang{
-  font-weight:700;
-  cursor:pointer;
-}
-
+.logo{font-size:36px;font-weight:800}
+.logo span{color:var(--green)}
+.top-actions{display:flex;gap:10px;align-items:center}
+.lang{font-weight:700;cursor:pointer}
 .btn-pill{
-  background:#eee;
-  border:none;
-  padding:10px 16px;
-  border-radius:999px;
-  font-weight:600;
-  cursor:pointer;
+  background:#eee;border:none;padding:10px 16px;border-radius:999px;
+  font-weight:600;cursor:pointer
 }
-
 main{padding:0 16px 32px}
-
 .card{
-  background:var(--card);
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:16px;
+  background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px
 }
-
-.balance-title{
-  color:var(--muted);
-  font-weight:600;
+.balance-title{color:var(--muted);font-weight:600}
+.balance{font-size:48px;font-weight:800;margin:8px 0 12px}
+.row{display:flex;justify-content:space-between;gap:12px}
+.money-box{
+  flex:1;padding:12px;border-radius:14px;cursor:pointer;
+  display:flex;flex-direction:column;gap:4px
 }
-
-.balance{
-  font-size:48px;
-  font-weight:800;
-  margin:8px 0 12px;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.money-in{color:var(--green);font-weight:700;cursor:pointer}
-.money-out{color:var(--red);font-weight:700;cursor:pointer}
-
-.section-title{
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:8px;
-}
-
+.money-box.active{background:var(--green-soft)}
+.money-in{color:var(--green);font-weight:800}
+.money-out{color:var(--red);font-weight:800}
+.label{font-size:14px;color:var(--muted);font-weight:600}
+.section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
-  list-style:none;
-  padding:12px 0;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  cursor:pointer;
+  list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;cursor:pointer
 }
-
 .list li:last-child{border-bottom:none}
-
 .soft-btn{
-  margin-top:12px;
-  background:var(--green-soft);
-  color:var(--green);
-  border:none;
-  padding:12px;
-  width:100%;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
+  margin-top:12px;background:var(--green-soft);color:var(--green);
+  border:none;padding:12px;width:100%;border-radius:999px;
+  font-weight:700;cursor:pointer
 }
-
 .primary-btn{
-  margin-top:16px;
-  background:var(--green);
-  color:#fff;
-  border:none;
-  padding:18px;
-  width:100%;
-  border-radius:999px;
-  font-size:18px;
-  font-weight:800;
-  cursor:pointer;
+  margin-top:16px;background:var(--green);color:#fff;border:none;
+  padding:18px;width:100%;border-radius:999px;
+  font-size:18px;font-weight:800;cursor:pointer
 }
-
 .tabs{
-  display:flex;
-  border:1px solid var(--border);
-  border-radius:8px;
-  overflow:hidden;
-  margin-bottom:16px;
+  display:flex;border:1px solid var(--border);border-radius:999px;
+  overflow:hidden;margin-bottom:16px
 }
-
 .tab{
-  flex:1;
-  padding:12px;
-  text-align:center;
-  font-weight:700;
-  cursor:pointer;
+  flex:1;padding:12px;text-align:center;font-weight:800;cursor:pointer
 }
-
-.tab.active{
-  background:var(--green);
-  color:#fff;
-}
-
+.tab.active{background:var(--green);color:#fff}
 input{
-  width:100%;
-  padding:14px;
-  margin-bottom:12px;
-  border-radius:6px;
-  border:1px solid var(--border);
-  font-size:16px;
+  width:100%;padding:14px;margin-bottom:12px;border-radius:10px;
+  border:1px solid var(--border);font-size:16px
 }
 </style>
 </head>
@@ -180,16 +99,22 @@ input{
 <!-- HOME -->
 <section id="home">
   <div class="card">
-    <div class="balance-title" id="homeTitle">This Month</div>
+    <div class="balance-title" id="homeTitle"></div>
     <div class="balance" id="homeBalance">0</div>
     <div class="row">
-      <div class="money-in" id="homeIn"></div>
-      <div class="money-out" id="homeOut"></div>
+      <div class="money-box active" id="homeIncomeBox">
+        <div class="label" id="incomeLabel"></div>
+        <div class="money-in" id="homeIncome">0</div>
+      </div>
+      <div class="money-box" id="homeExpensesBox">
+        <div class="label" id="expensesLabel"></div>
+        <div class="money-out" id="homeExpenses">0</div>
+      </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="section-title" id="whereTitle">Where your money went</div>
+    <div class="section-title" id="whereTitle"></div>
     <ul class="list" id="homeCats"></ul>
     <button class="soft-btn" id="toggleCats"></button>
   </div>
@@ -200,7 +125,7 @@ input{
 <!-- YEAR -->
 <section id="year" class="hidden">
   <div class="card">
-    <div class="section-title" id="yearTitle">This Year</div>
+    <div class="section-title" id="yearTitle"></div>
     <ul class="list" id="yearList"></ul>
     <button class="soft-btn" id="backFromYear"></button>
   </div>
@@ -212,8 +137,14 @@ input{
     <div class="section-title" id="monthTitle"></div>
     <div class="balance" id="monthBalance"></div>
     <div class="row">
-      <div class="money-in" id="monthIn"></div>
-      <div class="money-out" id="monthOut"></div>
+      <div class="money-box active" id="monthIncomeBox">
+        <div class="label" id="monthIncomeLabel"></div>
+        <div class="money-in" id="monthIncome">0</div>
+      </div>
+      <div class="money-box" id="monthExpensesBox">
+        <div class="label" id="monthExpensesLabel"></div>
+        <div class="money-out" id="monthExpenses">0</div>
+      </div>
     </div>
     <ul class="list" id="monthCats"></ul>
     <button class="soft-btn" id="backFromMonth"></button>
@@ -224,12 +155,12 @@ input{
 <section id="add" class="hidden">
   <div class="card">
     <div class="tabs">
-      <div class="tab active" id="tabIn"></div>
-      <div class="tab" id="tabOut"></div>
+      <div class="tab active" id="tabIncome"></div>
+      <div class="tab" id="tabExpenses"></div>
     </div>
-    <input id="amount" />
-    <input id="category" />
-    <input id="note" />
+    <input id="amount"/>
+    <input id="category"/>
+    <input id="note"/>
     <button class="primary-btn" id="saveBtn"></button>
     <button class="soft-btn" id="cancelAdd"></button>
   </div>
@@ -238,44 +169,35 @@ input{
 </main>
 
 <script>
-const words={
+const WORDS={
   EN:{
-    thisMonth:"This Month",
-    thisYear:"This Year",
-    income:"Income",
-    expenses:"Expenses",
-    where:"Where your money went",
-    viewAll:"View all categories",
-    showLess:"Show less",
-    add:"Add Entry",
-    back:"Back",
-    amount:"Amount",
-    category:"Category",
-    note:"Note (optional)",
-    other:"Other"
+    thisMonth:"This Month",thisYear:"This Year",
+    income:"Income",expenses:"Expenses",
+    where:"Your expenses",viewAll:"View all categories",
+    showLess:"Show less",add:"Add",back:"Back",
+    amount:"Amount",category:"Category",
+    note:"Note (optional)",other:"Other"
   },
   SW:{
-    thisMonth:"Mwezi huu",
-    thisYear:"Mwaka huu",
-    income:"Mapato",
-    expenses:"Matumizi",
-    where:"Matumizi yako",
-    viewAll:"Tazama yote",
-    showLess:"Onyesha kidogo",
-    add:"Ongeza",
-    back:"Rudi",
-    amount:"Kiasi",
-    category:"Aina",
-    note:"Maelezo (hiari)",
-    other:"Nyingine"
+    thisMonth:"Mwezi huu",thisYear:"Mwaka huu",
+    income:"Mapato",expenses:"Matumizi",
+    where:"Matumizi yako",viewAll:"Tazama aina zote",
+    showLess:"Onyesha chache",add:"Ongeza",back:"Rudi",
+    amount:"Kiasi",category:"Aina",
+    note:"Maelezo (hiari)",other:"Nyingine"
   }
 };
 
-let lang="EN";
+const MONTHS={
+  EN:["January","February","March","April","May","June","July","August","September","October","November","December"],
+  SW:["Januari","Februari","Machi","Aprili","Mei","Juni","Julai","Agosti","Septemba","Oktoba","Novemba","Desemba"]
+};
+
+let lang=localStorage.getItem("lang")||"EN";
 let entries=JSON.parse(localStorage.getItem("senti")||"[]");
 let expanded=false;
-let type="in";
-let currentMonth=null;
+let filter="expenses";
+let currentMonthKey=null;
 
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString();
@@ -286,22 +208,33 @@ function show(id){
 }
 
 function applyLang(){
-  const w=words[lang];
+  const w=WORDS[lang];
   $("langToggle").textContent=lang;
   $("homeTitle").textContent=w.thisMonth;
   $("yearTitle").textContent=w.thisYear;
+  $("incomeLabel").textContent=w.income;
+  $("expensesLabel").textContent=w.expenses;
+  $("monthIncomeLabel").textContent=w.income;
+  $("monthExpensesLabel").textContent=w.expenses;
   $("whereTitle").textContent=w.where;
-  $("toggleCats").textContent=expanded?w.showLess:w.viewAll;
   $("addBtn").textContent=w.add;
   $("backFromYear").textContent=w.back;
   $("backFromMonth").textContent=w.back;
-  $("tabIn").textContent=w.income;
-  $("tabOut").textContent=w.expenses;
+  $("toggleCats").textContent=expanded?w.showLess:w.viewAll;
+  $("tabIncome").textContent=w.income;
+  $("tabExpenses").textContent=w.expenses;
   $("amount").placeholder=w.amount;
   $("category").placeholder=w.category;
   $("note").placeholder=w.note;
   $("saveBtn").textContent=w.add;
   $("cancelAdd").textContent=w.back;
+}
+
+function setHomeFilter(f){
+  filter=f;
+  $("homeIncomeBox").classList.toggle("active",f==="income");
+  $("homeExpensesBox").classList.toggle("active",f==="expenses");
+  renderHome();
 }
 
 function renderHome(){
@@ -310,26 +243,28 @@ function renderHome(){
   entries.forEach(e=>{
     const d=new Date(e.date);
     if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
-      if(e.type==="in") inc+=e.amount;
-      else{
+      if(e.type==="income") inc+=e.amount;
+      if(e.type==="expenses"){
         out+=e.amount;
+        if(filter==="expenses"){
+          cats[e.category]=(cats[e.category]||0)+e.amount;
+        }
+      }
+      if(filter==="income" && e.type==="income"){
         cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
   });
   $("homeBalance").textContent=fmt(inc-out);
-  $("homeIn").textContent=`${words[lang].income} ${fmt(inc)}`;
-  $("homeOut").textContent=`${words[lang].expenses} ${fmt(out)}`;
-
-  const list=Object.entries(cats);
-  const shown=expanded?list:list.slice(0,3);
+  $("homeIncome").textContent=fmt(inc);
+  $("homeExpenses").textContent=fmt(out);
+  const all=Object.entries(cats);
+  const shown=expanded?all:all.slice(0,3);
   $("homeCats").innerHTML="";
   shown.forEach(([k,v])=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<span>${k}</span><strong>${fmt(v)}</strong>`;
-    $("homeCats").appendChild(li);
+    $("homeCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
   });
-  $("toggleCats").style.display=list.length>3?"block":"none";
+  $("toggleCats").style.display=all.length>3?"block":"none";
 }
 
 function renderYear(){
@@ -337,47 +272,77 @@ function renderYear(){
   entries.forEach(e=>{
     const d=new Date(e.date);
     const k=`${d.getFullYear()}-${d.getMonth()}`;
-    map[k]=map[k]||{in:0,out:0};
+    map[k]=map[k]||{income:0,expenses:0};
     map[k][e.type]+=e.amount;
   });
   $("yearList").innerHTML="";
   Object.keys(map).sort().reverse().forEach(k=>{
     const [y,m]=k.split("-");
     const li=document.createElement("li");
-    li.innerHTML=`<span>${new Date(y,m).toLocaleString(lang==="EN"?"en":"sw",{month:"long",year:"numeric"})}</span><strong>${fmt(map[k].in-map[k].out)}</strong>`;
+    li.innerHTML=`<span>${MONTHS[lang][m]} ${y}</span><strong>${fmt(map[k].income-map[k].expenses)}</strong>`;
     li.onclick=()=>openMonth(k);
     $("yearList").appendChild(li);
   });
 }
 
+function setMonthFilter(f){
+  filter=f;
+  $("monthIncomeBox").classList.toggle("active",f==="income");
+  $("monthExpensesBox").classList.toggle("active",f==="expenses");
+  renderMonth();
+}
+
 function openMonth(k){
-  currentMonth=k;
-  const [y,m]=k.split("-");
+  currentMonthKey=k;
+  filter="expenses";
+  $("monthIncomeBox").classList.remove("active");
+  $("monthExpensesBox").classList.add("active");
+  show("month");
+  renderMonth();
+}
+
+function renderMonth(){
+  const [y,m]=currentMonthKey.split("-");
   let inc=0,out=0,cats={};
   entries.forEach(e=>{
     const d=new Date(e.date);
     if(d.getFullYear()==y&&d.getMonth()==m){
-      if(e.type==="in") inc+=e.amount;
-      else{
+      if(e.type==="income") inc+=e.amount;
+      if(e.type==="expenses"){
         out+=e.amount;
+        if(filter==="expenses"){
+          cats[e.category]=(cats[e.category]||0)+e.amount;
+        }
+      }
+      if(filter==="income" && e.type==="income"){
         cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
   });
-  $("monthTitle").textContent=new Date(y,m).toLocaleString(lang==="EN"?"en":"sw",{month:"long",year:"numeric"});
+  $("monthTitle").textContent=`${MONTHS[lang][m]} ${y}`;
   $("monthBalance").textContent=fmt(inc-out);
-  $("monthIn").textContent=`${words[lang].income} ${fmt(inc)}`;
-  $("monthOut").textContent=`${words[lang].expenses} ${fmt(out)}`;
+  $("monthIncome").textContent=fmt(inc);
+  $("monthExpenses").textContent=fmt(out);
   $("monthCats").innerHTML="";
   Object.entries(cats).forEach(([k,v])=>{
-    const li=document.createElement("li");
-    li.innerHTML=`<span>${k}</span><strong>${fmt(v)}</strong>`;
-    $("monthCats").appendChild(li);
+    $("monthCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
   });
-  show("month");
 }
 
-$("langToggle").onclick=()=>{lang=lang==="EN"?"SW":"EN";applyLang();renderHome();renderYear()};
+$("langToggle").onclick=()=>{
+  lang=lang==="EN"?"SW":"EN";
+  localStorage.setItem("lang",lang);
+  applyLang();
+  renderHome();
+  if(currentMonthKey) renderMonth();
+};
+
+$("homeIncomeBox").onclick=()=>setHomeFilter("income");
+$("homeExpensesBox").onclick=()=>setHomeFilter("expenses");
+
+$("monthIncomeBox").onclick=()=>setMonthFilter("income");
+$("monthExpensesBox").onclick=()=>setMonthFilter("expenses");
+
 $("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome()};
 $("yearBtn").onclick=()=>{renderYear();show("year")};
 $("backFromYear").onclick=()=>show("home");
@@ -385,28 +350,28 @@ $("backFromMonth").onclick=()=>show("home");
 $("addBtn").onclick=()=>show("add");
 $("cancelAdd").onclick=()=>show("home");
 
-$("tabIn").onclick=()=>{type="in";$("tabIn").classList.add("active");$("tabOut").classList.remove("active")};
-$("tabOut").onclick=()=>{type="out";$("tabOut").classList.add("active");$("tabIn").classList.remove("active")};
+$("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
+$("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
 
 $("saveBtn").onclick=()=>{
   const amt=Number($("amount").value);
   if(!amt)return;
   entries.push({
-    type,
+    type:$("tabIncome").classList.contains("active")?"income":"expenses",
     amount:amt,
-    category:$("category").value||words[lang].other,
+    category:$("category").value||WORDS[lang].other,
     note:$("note").value||"",
     date:new Date().toISOString()
   });
   localStorage.setItem("senti",JSON.stringify(entries));
   $("amount").value=$("category").value=$("note").value="";
   show("home");
-  renderHome();
+  setHomeFilter("expenses");
 };
 
 applyLang();
-renderHome();
+setHomeFilter("expenses");
 </script>
 
 </body>
-      </html>
+  </html>

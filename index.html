@@ -56,8 +56,8 @@ padding:12px 16px;border-radius:999px;margin-top:16px}
     <div class="small">This Month</div>
     <div class="balance" id="homeBalance">0</div>
     <div class="row">
-      <div class="tap in" id="tapIn">Money In <strong id="homeIn">0</strong></div>
-      <div class="tap out" id="tapOut">Money Out <strong id="homeOut">0</strong></div>
+      <div class="tap in" id="homeTapIn">Money In <strong id="homeIn">0</strong></div>
+      <div class="tap out" id="homeTapOut">Money Out <strong id="homeOut">0</strong></div>
     </div>
   </div>
 
@@ -83,8 +83,8 @@ padding:12px 16px;border-radius:999px;margin-top:16px}
     <div class="section-title" id="monthTitle"></div>
     <div class="balance" id="monthBalance">0</div>
     <div class="row">
-      <div class="in">Money In <strong id="monthIn">0</strong></div>
-      <div class="out">Money Out <strong id="monthOut">0</strong></div>
+      <div class="tap in" id="monthTapIn">Money In <strong id="monthIn">0</strong></div>
+      <div class="tap out" id="monthTapOut">Money Out <strong id="monthOut">0</strong></div>
     </div>
     <ul id="monthCats"></ul>
     <button class="back-btn" id="backFromMonth">Back</button>
@@ -118,7 +118,8 @@ padding:12px 16px;border-radius:999px;margin-top:16px}
 
 <script>
 let entries = JSON.parse(localStorage.getItem("senti")||"[]");
-let entryType="in", expanded=false;
+let entryType="in", expanded=false, currentMonthKey=null;
+
 const fmt=n=>n.toLocaleString();
 const show=id=>["home","year","month","list","add"]
 .forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
@@ -129,7 +130,7 @@ function renderHome(){
  const now=new Date(); let inc=0,out=0,cats={};
  entries.forEach(e=>{
   const d=new Date(e.date);
-  if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
+  if(monthKey(d)===monthKey(now)){
     if(e.type==="in") inc+=e.amount;
     else{
       out+=e.amount;
@@ -163,6 +164,7 @@ function renderYear(){
 }
 
 function openMonth(k){
+ currentMonthKey=k;
  show("month");
  let inc=0,out=0,cats={};
  entries.forEach(e=>{
@@ -183,25 +185,34 @@ function openMonth(k){
  .forEach(([c,v])=>monthCats.innerHTML+=`<li><span>${c}</span><strong>${fmt(v)}</strong></li>`);
 }
 
-function openList(t){
+function openList(type){
  show("list");
- listTitle.textContent=t==="in"?"Money In":"Money Out";
+ listTitle.textContent=type==="in"?"Money In":"Money Out";
  listItems.innerHTML="";
- entries.filter(e=>e.type===t)
- .forEach(e=>listItems.innerHTML+=`<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`);
+ entries.forEach(e=>{
+  if(e.type===type && (!currentMonthKey || monthKey(new Date(e.date))===currentMonthKey)){
+    listItems.innerHTML+=`<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`;
+  }
+ });
 }
 
 goYear.onclick=()=>{show("year");renderYear()};
 backFromYear.onclick=()=>show("home");
 backFromMonth.onclick=()=>show("year");
-backFromList.onclick=()=>show("home");
-tapIn.onclick=()=>openList("in");
-tapOut.onclick=()=>openList("out");
+backFromList.onclick=()=>currentMonthKey?show("month"):show("home");
+
+homeTapIn.onclick=()=>{currentMonthKey=monthKey(new Date());openList("in")};
+homeTapOut.onclick=()=>{currentMonthKey=monthKey(new Date());openList("out")};
+monthTapIn.onclick=()=>openList("in");
+monthTapOut.onclick=()=>openList("out");
+
 toggleCats.onclick=()=>{expanded=!expanded;renderHome()};
 goAdd.onclick=()=>show("add");
 cancel.onclick=()=>show("home");
+
 typeIn.onclick=()=>{entryType="in";typeIn.classList.add("active");typeOut.classList.remove("active")};
 typeOut.onclick=()=>{entryType="out";typeOut.classList.add("active");typeIn.classList.remove("active")};
+
 save.onclick=()=>{
  const amt=Number(amount.value); if(!amt)return;
  entries.push({type:entryType,amount:amt,category:category.value||"Other",note:note.value||"",date:new Date().toISOString()});
@@ -209,7 +220,8 @@ save.onclick=()=>{
  amount.value=category.value=note.value="";
  show("home");renderHome();
 };
+
 renderHome();
 </script>
 </body>
-  </html>
+        </html>

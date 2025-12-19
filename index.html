@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Senti</title>
 
 <style>
@@ -44,9 +44,9 @@ main{padding:0 16px 32px}
 }
 .balance-title{color:var(--muted);font-weight:600}
 .balance{font-size:48px;font-weight:800;margin:8px 0 12px}
-.row{display:flex;justify-content:space-between;gap:12px}
+.row{display:flex;gap:12px}
 .money-box{
-  flex:1;padding:12px;border-radius:14px;cursor:pointer;
+  flex:1;padding:14px;border-radius:16px;cursor:pointer;
   display:flex;flex-direction:column;gap:4px
 }
 .money-box.active{background:var(--green-soft)}
@@ -56,7 +56,7 @@ main{padding:0 16px 32px}
 .section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
   list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;cursor:pointer
+  display:flex;justify-content:space-between
 }
 .list li:last-child{border-bottom:none}
 .soft-btn{
@@ -96,7 +96,6 @@ input{
 
 <main>
 
-<!-- HOME -->
 <section id="home">
   <div class="card">
     <div class="balance-title" id="homeTitle"></div>
@@ -122,7 +121,6 @@ input{
   <button class="primary-btn" id="addBtn"></button>
 </section>
 
-<!-- YEAR -->
 <section id="year" class="hidden">
   <div class="card">
     <div class="section-title" id="yearTitle"></div>
@@ -131,7 +129,6 @@ input{
   </div>
 </section>
 
-<!-- MONTH -->
 <section id="month" class="hidden">
   <div class="card">
     <div class="section-title" id="monthTitle"></div>
@@ -151,16 +148,15 @@ input{
   </div>
 </section>
 
-<!-- ADD -->
 <section id="add" class="hidden">
   <div class="card">
     <div class="tabs">
       <div class="tab active" id="tabIncome"></div>
       <div class="tab" id="tabExpenses"></div>
     </div>
-    <input id="amount"/>
-    <input id="category"/>
-    <input id="note"/>
+    <input id="amount">
+    <input id="category">
+    <input id="note">
     <button class="primary-btn" id="saveBtn"></button>
     <button class="soft-btn" id="cancelAdd"></button>
   </div>
@@ -170,22 +166,14 @@ input{
 
 <script>
 const WORDS={
-  EN:{
-    thisMonth:"This Month",thisYear:"This Year",
-    income:"Income",expenses:"Expenses",
-    where:"Your expenses",viewAll:"View all categories",
-    showLess:"Show less",add:"Add",back:"Back",
-    amount:"Amount",category:"Category",
-    note:"Note (optional)",other:"Other"
-  },
-  SW:{
-    thisMonth:"Mwezi huu",thisYear:"Mwaka huu",
-    income:"Mapato",expenses:"Matumizi",
-    where:"Matumizi yako",viewAll:"Tazama aina zote",
-    showLess:"Onyesha chache",add:"Ongeza",back:"Rudi",
-    amount:"Kiasi",category:"Aina",
-    note:"Maelezo (hiari)",other:"Nyingine"
-  }
+  EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
+      where:"Your expenses",viewAll:"View all categories",showLess:"Show less",
+      add:"Add",back:"Back",amount:"Amount",category:"Category",
+      note:"Note (optional)",other:"Other"},
+  SW:{thisMonth:"Mwezi huu",thisYear:"Mwaka huu",income:"Mapato",expenses:"Matumizi",
+      where:"Matumizi yako",viewAll:"Tazama aina zote",showLess:"Onyesha chache",
+      add:"Ongeza",back:"Rudi",amount:"Kiasi",category:"Aina",
+      note:"Maelezo (hiari)",other:"Nyingine"}
 };
 
 const MONTHS={
@@ -246,9 +234,7 @@ function renderHome(){
       if(e.type==="income") inc+=e.amount;
       if(e.type==="expenses"){
         out+=e.amount;
-        if(filter==="expenses"){
-          cats[e.category]=(cats[e.category]||0)+e.amount;
-        }
+        if(filter==="expenses") cats[e.category]=(cats[e.category]||0)+e.amount;
       }
       if(filter==="income" && e.type==="income"){
         cats[e.category]=(cats[e.category]||0)+e.amount;
@@ -258,6 +244,7 @@ function renderHome(){
   $("homeBalance").textContent=fmt(inc-out);
   $("homeIncome").textContent=fmt(inc);
   $("homeExpenses").textContent=fmt(out);
+
   const all=Object.entries(cats);
   const shown=expanded?all:all.slice(0,3);
   $("homeCats").innerHTML="";
@@ -285,19 +272,19 @@ function renderYear(){
   });
 }
 
-function setMonthFilter(f){
-  filter=f;
-  $("monthIncomeBox").classList.toggle("active",f==="income");
-  $("monthExpensesBox").classList.toggle("active",f==="expenses");
-  renderMonth();
-}
-
 function openMonth(k){
   currentMonthKey=k;
   filter="expenses";
   $("monthIncomeBox").classList.remove("active");
   $("monthExpensesBox").classList.add("active");
   show("month");
+  renderMonth();
+}
+
+function setMonthFilter(f){
+  filter=f;
+  $("monthIncomeBox").classList.toggle("active",f==="income");
+  $("monthExpensesBox").classList.toggle("active",f==="expenses");
   renderMonth();
 }
 
@@ -310,9 +297,7 @@ function renderMonth(){
       if(e.type==="income") inc+=e.amount;
       if(e.type==="expenses"){
         out+=e.amount;
-        if(filter==="expenses"){
-          cats[e.category]=(cats[e.category]||0)+e.amount;
-        }
+        if(filter==="expenses") cats[e.category]=(cats[e.category]||0)+e.amount;
       }
       if(filter==="income" && e.type==="income"){
         cats[e.category]=(cats[e.category]||0)+e.amount;
@@ -339,7 +324,6 @@ $("langToggle").onclick=()=>{
 
 $("homeIncomeBox").onclick=()=>setHomeFilter("income");
 $("homeExpensesBox").onclick=()=>setHomeFilter("expenses");
-
 $("monthIncomeBox").onclick=()=>setMonthFilter("income");
 $("monthExpensesBox").onclick=()=>setMonthFilter("expenses");
 
@@ -349,9 +333,6 @@ $("backFromYear").onclick=()=>show("home");
 $("backFromMonth").onclick=()=>show("home");
 $("addBtn").onclick=()=>show("add");
 $("cancelAdd").onclick=()=>show("home");
-
-$("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
-$("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
 
 $("saveBtn").onclick=()=>{
   const amt=Number($("amount").value);
@@ -368,6 +349,9 @@ $("saveBtn").onclick=()=>{
   show("home");
   setHomeFilter("expenses");
 };
+
+$("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
+$("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
 
 applyLang();
 setHomeFilter("expenses");

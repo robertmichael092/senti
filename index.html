@@ -1,395 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Senti</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Senti</title>
 
-  <style>
-    :root {
-      --green: #1e7f57;
-      --red: #c0392b;
-      --bg: #faf9f6;
-      --card: #ffffff;
-      --text: #111;
-      --muted: #777;
-    }
+<style>
+:root {
+  --bg: #faf9f5;
+  --card: #ffffff;
+  --green: #1f7f57;
+  --green-soft: #e8f3ee;
+  --red: #c84c4c;
+  --text: #111;
+  --muted: #777;
+  --radius: 18px;
+}
 
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-    }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 20px;
-    }
+.hidden { display: none; }
 
-    .logo {
-      font-size: 42px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
 
-    .logo .dot {
-      color: var(--green);
-      font-weight: 900;
-    }
+.logo {
+  font-size: 36px;
+  font-weight: 800;
+}
 
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 12px 16px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #eee;
-    }
+.logo span {
+  color: var(--green);
+}
 
-    .primary {
-      background: var(--green);
-      color: #fff;
-      width: 100%;
-      padding: 18px;
-      font-size: 18px;
-      margin-top: 16px;
-    }
+button {
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
 
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 20px;
-      margin: 16px;
-    }
+.year-btn {
+  background: #eee;
+  padding: 10px 16px;
+  border-radius: 999px;
+}
 
-    .muted {
-      color: var(--muted);
-    }
+main {
+  padding: 0 16px 40px;
+}
 
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-    }
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
 
-    .amount {
-      font-size: 40px;
-      font-weight: 700;
-    }
+.balance {
+  font-size: 42px;
+  font-weight: 800;
+}
 
-    .green { color: var(--green); }
-    .red { color: var(--red); }
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+.tap {
+  cursor: pointer;
+}
 
-    li {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
-    }
+.in { color: var(--green); }
+.out { color: var(--red); }
 
-    .hidden {
-      display: none;
-    }
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
 
-    .toggle {
-      margin-top: 10px;
-      color: var(--green);
-      background: #eef5f1;
-    }
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      font-size: 16px;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-    }
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
 
-    .tabs {
-      display: flex;
-      margin-top: 12px;
-    }
+.more-btn {
+  margin-top: 12px;
+  background: var(--green-soft);
+  color: var(--green);
+  padding: 10px 16px;
+  border-radius: 999px;
+}
 
-    .tab {
-      flex: 1;
-      padding: 12px;
-      border-radius: 12px;
-      background: #eee;
-      text-align: center;
-      cursor: pointer;
-    }
+.add-btn {
+  width: 100%;
+  background: var(--green);
+  color: #fff;
+  padding: 18px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 999px;
+  margin-top: 16px;
+}
 
-    .tab.active {
-      background: var(--green);
-      color: white;
-    }
-  </style>
+input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+.type-toggle {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.type-toggle button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  background: #eee;
+}
+
+.type-toggle .active {
+  background: var(--green);
+  color: #fff;
+}
+
+.back-btn {
+  background: var(--green-soft);
+  color: var(--green);
+  padding: 12px 16px;
+  border-radius: 999px;
+  margin-top: 16px;
+}
+
+.small {
+  color: var(--muted);
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="logo">Senti<span class="dot">•</span></div>
-  <button id="goYear">Year</button>
+  <div class="logo">Senti<span>•</span></div>
+  <button class="year-btn" id="goYear">Year</button>
 </header>
+
+<main>
 
 <!-- HOME -->
 <section id="home" class="screen">
   <div class="card">
-    <div class="muted">This Month</div>
-    <div class="amount" id="homeBalance">0</div>
+    <div class="small">This Month</div>
+    <div class="balance" id="homeBalance">0</div>
 
     <div class="row">
-      <div class="green" id="homeIn">0</div>
-      <div class="red" id="homeOut">0</div>
+      <div class="tap in" id="tapIn">Money In <strong id="homeIn">0</strong></div>
+      <div class="tap out" id="tapOut">Money Out <strong id="homeOut">0</strong></div>
     </div>
   </div>
 
   <div class="card">
-    <h3>Where your money went</h3>
+    <div class="section-title">Where your money went</div>
     <ul id="homeCats"></ul>
-    <button id="toggleCats" class="toggle hidden">View all categories</button>
+    <button class="more-btn hidden" id="toggleCats">View all categories</button>
   </div>
 
-  <div class="card">
-    <button class="primary" id="goAdd">+ Add Entry</button>
-  </div>
+  <button class="add-btn" id="goAdd">+ Add Entry</button>
 </section>
 
 <!-- YEAR -->
 <section id="year" class="screen hidden">
   <div class="card">
-    <h2>This Year</h2>
+    <div class="section-title">This Year</div>
     <ul id="yearList"></ul>
-    <button id="backHome" class="toggle">Back</button>
+    <button class="back-btn" id="backFromYear">Back</button>
   </div>
 </section>
 
 <!-- MONTH -->
 <section id="month" class="screen hidden">
   <div class="card">
-    <h2 id="monthTitle"></h2>
-    <div class="amount" id="monthBalance">0</div>
+    <div class="section-title" id="monthTitle"></div>
+    <div class="balance" id="monthBalance">0</div>
+
     <div class="row">
-      <div class="green" id="monthIn">0</div>
-      <div class="red" id="monthOut">0</div>
+      <div class="in">Money In <strong id="monthIn">0</strong></div>
+      <div class="out">Money Out <strong id="monthOut">0</strong></div>
     </div>
-  </div>
 
-  <div class="card">
-    <h3>Where your money went</h3>
     <ul id="monthCats"></ul>
-  </div>
-
-  <div class="card">
-    <button id="backYear" class="toggle">Back to Year</button>
+    <button class="back-btn" id="backFromMonth">Back</button>
   </div>
 </section>
 
 <!-- LIST -->
 <section id="list" class="screen hidden">
   <div class="card">
-    <h2 id="listTitle"></h2>
+    <div class="section-title" id="listTitle"></div>
     <ul id="listItems"></ul>
-    <button id="backMonth" class="toggle">Back</button>
+    <button class="back-btn" id="backFromList">Back</button>
   </div>
 </section>
 
 <!-- ADD -->
 <section id="add" class="screen hidden">
   <div class="card">
-    <h2>Add Entry</h2>
+    <div class="section-title">Add Entry</div>
 
-    <div class="tabs">
-      <div class="tab active" id="typeOut">Out</div>
-      <div class="tab" id="typeIn">In</div>
+    <div class="type-toggle">
+      <button id="typeIn" class="active">In</button>
+      <button id="typeOut">Out</button>
     </div>
 
     <input id="amount" placeholder="Amount" type="number" />
     <input id="category" placeholder="Category" />
     <input id="note" placeholder="Note (optional)" />
 
-    <button class="primary" id="save">Save</button>
-    <button id="cancel" class="toggle">Cancel</button>
+    <button class="add-btn" id="save">Save</button>
+    <button class="back-btn" id="cancel">Cancel</button>
   </div>
 </section>
 
+</main>
+
 <script>
-  const screens = document.querySelectorAll(".screen");
-  const fmt = n => n.toLocaleString();
+let entries = JSON.parse(localStorage.getItem("senti") || "[]");
+let entryType = "in";
+let expanded = false;
+let currentMonthKey = null;
+let lastScreen = "home";
 
-  let entries = JSON.parse(localStorage.getItem("senti") || "[]");
-  let entryType = "out";
-  let catsExpanded = false;
-  let currentMonthKey = null;
+const fmt = n => n.toLocaleString();
 
-  function show(id) {
-    screens.forEach(s => s.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
-  }
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  lastScreen = id;
+}
 
-  function monthKey(d) {
-    return d.getFullYear() + "-" + d.getMonth();
-  }
+function monthKey(d) {
+  return d.getFullYear() + "-" + d.getMonth();
+}
 
-  function monthLabel(key) {
-    const [y, m] = key.split("-");
-    return new Date(y, m).toLocaleString(undefined, { month: "long", year: "numeric" });
-  }
+function monthLabel(key) {
+  const [y, m] = key.split("-");
+  return new Date(y, m).toLocaleString("default", { month: "long", year: "numeric" }).replace(" ", " · ");
+}
 
-  function renderHome() {
-    const now = new Date();
-    let inc = 0, out = 0, cats = {};
+function renderHome() {
+  const now = new Date();
+  let inc = 0, out = 0, cats = {};
 
-    entries.forEach(e => {
-      const d = new Date(e.date);
-      if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-        if (e.type === "in") inc += e.amount;
-        else {
-          out += e.amount;
-          cats[e.category] = (cats[e.category] || 0) + e.amount;
-        }
+  entries.forEach(e => {
+    const d = new Date(e.date);
+    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+      if (e.type === "in") inc += e.amount;
+      else {
+        out += e.amount;
+        cats[e.category] = (cats[e.category] || 0) + e.amount;
       }
-    });
+    }
+  });
 
-    homeBalance.textContent = fmt(inc - out);
-    homeIn.textContent = fmt(inc);
-    homeOut.textContent = fmt(out);
+  homeBalance.textContent = fmt(inc - out);
+  homeIn.textContent = fmt(inc);
+  homeOut.textContent = fmt(out);
 
-    homeCats.innerHTML = "";
-    const all = Object.entries(cats);
-    const visible = catsExpanded ? all : all.slice(0, 3);
+  homeCats.innerHTML = "";
+  const all = Object.entries(cats);
+  const visible = expanded ? all : all.slice(0,3);
 
-    visible.forEach(([c, v]) => {
-      homeCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
-    });
+  visible.forEach(([c,v]) => {
+    homeCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
+  });
 
-    toggleCats.classList.toggle("hidden", all.length <= 3);
-    toggleCats.textContent = catsExpanded ? "Show less" : "View all categories";
-  }
+  toggleCats.classList.toggle("hidden", all.length <= 3);
+  toggleCats.textContent = expanded ? "Show less" : "View all categories";
+}
 
-  function renderYear() {
-    const map = {};
-    entries.forEach(e => {
-      const k = monthKey(new Date(e.date));
-      map[k] = map[k] || { in: 0, out: 0 };
-      map[k][e.type] += e.amount;
-    });
+function renderYear() {
+  yearList.innerHTML = "";
+  const map = {};
 
-    yearList.innerHTML = "";
-    Object.keys(map).sort().reverse().forEach(k => {
-      const bal = map[k].in - map[k].out;
-      yearList.innerHTML += `
-        <li onclick="openMonth('${k}')">
-          <span>${monthLabel(k)}</span>
-          <strong>${fmt(bal)}</strong>
-        </li>`;
-    });
-  }
+  entries.forEach(e => {
+    const key = monthKey(new Date(e.date));
+    map[key] = map[key] || { in:0, out:0 };
+    map[key][e.type] += e.amount;
+  });
 
-  function openMonth(key) {
-    currentMonthKey = key;
-    show("month");
+  Object.keys(map).sort().reverse().forEach(k => {
+    const bal = map[k].in - map[k].out;
+    yearList.innerHTML += `<li class="tap" onclick="openMonth('${k}')"><span>${monthLabel(k)}</span><strong>${fmt(bal)}</strong></li>`;
+  });
+}
 
-    let inc = 0, out = 0, cats = {};
-    entries.forEach(e => {
-      if (monthKey(new Date(e.date)) === key) {
-        if (e.type === "in") inc += e.amount;
-        else {
-          out += e.amount;
-          cats[e.category] = (cats[e.category] || 0) + e.amount;
-        }
+function openMonth(key) {
+  currentMonthKey = key;
+  show("month");
+
+  let inc=0,out=0,cats={};
+
+  entries.forEach(e => {
+    if (monthKey(new Date(e.date)) === key) {
+      if (e.type==="in") inc+=e.amount;
+      else {
+        out+=e.amount;
+        cats[e.category]=(cats[e.category]||0)+e.amount;
       }
-    });
+    }
+  });
 
-    monthTitle.textContent = monthLabel(key);
-    monthBalance.textContent = fmt(inc - out);
-    monthIn.textContent = fmt(inc);
-    monthOut.textContent = fmt(out);
+  monthTitle.textContent = monthLabel(key);
+  monthBalance.textContent = fmt(inc-out);
+  monthIn.textContent = fmt(inc);
+  monthOut.textContent = fmt(out);
 
-    monthCats.innerHTML = "";
-    Object.entries(cats).forEach(([c, v]) => {
-      monthCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
-    });
-  }
+  monthCats.innerHTML="";
+  Object.entries(cats).forEach(([c,v])=>{
+    monthCats.innerHTML+=`<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
+  });
+}
 
-  function openList(type) {
-    show("list");
-    listTitle.textContent = type === "in" ? "Money In" : "Money Out";
-    listItems.innerHTML = "";
+function openList(type) {
+  show("list");
+  listTitle.textContent = type==="in" ? "Money In" : "Money Out";
+  listItems.innerHTML = "";
 
-    entries.forEach(e => {
-      if (e.type === type && (!currentMonthKey || monthKey(new Date(e.date)) === currentMonthKey)) {
-        listItems.innerHTML += `<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`;
-      }
-    });
-  }
+  entries.forEach(e=>{
+    if(e.type===type){
+      listItems.innerHTML+=`<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`;
+    }
+  });
+}
 
-  goAdd.onclick = () => show("add");
-  cancel.onclick = () => show("home");
+/* EVENTS */
+goYear.onclick = ()=>{ show("year"); renderYear(); };
+backFromYear.onclick = ()=>show("home");
+backFromMonth.onclick = ()=>show("year");
+backFromList.onclick = ()=>show("home");
 
-  goYear.onclick = () => { renderYear(); show("year"); };
-  backHome.onclick = () => show("home");
-  backYear.onclick = () => show("year");
-  backMonth.onclick = () => show("month");
+tapIn.onclick = ()=>openList("in");
+tapOut.onclick = ()=>openList("out");
 
-  toggleCats.onclick = () => { catsExpanded = !catsExpanded; renderHome(); };
+toggleCats.onclick = ()=>{ expanded=!expanded; renderHome(); };
 
-  homeIn.onclick = () => openList("in");
-  homeOut.onclick = () => openList("out");
-  monthIn.onclick = () => openList("in");
-  monthOut.onclick = () => openList("out");
+goAdd.onclick = ()=>show("add");
+cancel.onclick = ()=>show("home");
 
-  typeOut.onclick = () => {
-    entryType = "out";
-    typeOut.classList.add("active");
-    typeIn.classList.remove("active");
-  };
+typeIn.onclick = ()=>{ entryType="in"; typeIn.classList.add("active"); typeOut.classList.remove("active"); };
+typeOut.onclick = ()=>{ entryType="out"; typeOut.classList.add("active"); typeIn.classList.remove("active"); };
 
-  typeIn.onclick = () => {
-    entryType = "in";
-    typeIn.classList.add("active");
-    typeOut.classList.remove("active");
-  };
+save.onclick = ()=>{
+  const amt = Number(amount.value);
+  if(!amt) return;
 
-  save.onclick = () => {
-    const amt = Number(amount.value);
-    if (!amt) return;
+  entries.push({
+    type: entryType,
+    amount: amt,
+    category: category.value || "Other",
+    note: note.value || "",
+    date: new Date().toISOString()
+  });
 
-    entries.push({
-      type: entryType,
-      amount: amt,
-      category: category.value || "Other",
-      note: note.value || "",
-      date: new Date().toISOString()
-    });
-
-    localStorage.setItem("senti", JSON.stringify(entries));
-    amount.value = category.value = note.value = "";
-    show("home");
-    renderHome();
-  };
-
+  localStorage.setItem("senti", JSON.stringify(entries));
+  amount.value = category.value = note.value = "";
+  show("home");
   renderHome();
+};
+
+renderHome();
 </script>
 
 </body>
-      </html>
+  </html>

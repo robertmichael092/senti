@@ -56,7 +56,7 @@ main{padding:0 16px 32px}
 .section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
   list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;cursor:pointer
+  display:flex;justify-content:space-between
 }
 .list li:last-child{border-bottom:none}
 .soft-btn{
@@ -165,9 +165,197 @@ input{
 </main>
 
 <script>
-/* JS unchanged EXCEPT year button */
-$("yearBtn").onclick=()=>{renderYear(); show("year")};
+const WORDS={
+  EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
+      where:"Your expenses",viewAll:"View all categories",showLess:"Show less",
+      add:"Add",back:"Back",amount:"Amount",category:"Category",
+      note:"Note (optional)",other:"Other"},
+  SW:{thisMonth:"Mwezi huu",thisYear:"Mwaka huu",income:"Mapato",expenses:"Matumizi",
+      where:"Matumizi yako",viewAll:"Tazama aina zote",showLess:"Onyesha chache",
+      add:"Ongeza",back:"Rudi",amount:"Kiasi",category:"Aina",
+      note:"Maelezo (hiari)",other:"Nyingine"}
+};
+
+const MONTHS={
+  EN:["January","February","March","April","May","June","July","August","September","October","November","December"],
+  SW:["Januari","Februari","Machi","Aprili","Mei","Juni","Julai","Agosti","Septemba","Oktoba","Novemba","Desemba"]
+};
+
+let lang=localStorage.getItem("lang")||"EN";
+let entries=JSON.parse(localStorage.getItem("senti")||"[]");
+let expanded=false;
+let filter="expenses";
+let currentMonthKey=null;
+
+const $=id=>document.getElementById(id);
+const fmt=n=>n.toLocaleString();
+
+function show(id){
+  ["home","year","month","add"].forEach(s=>$(s).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+}
+
+function applyLang(){
+  const w=WORDS[lang];
+  $("langToggle").textContent=lang;
+  $("homeTitle").textContent=w.thisMonth;
+  $("yearTitle").textContent=w.thisYear;
+  $("incomeLabel").textContent=w.income;
+  $("expensesLabel").textContent=w.expenses;
+  $("monthIncomeLabel").textContent=w.income;
+  $("monthExpensesLabel").textContent=w.expenses;
+  $("whereTitle").textContent=w.where;
+  $("addBtn").textContent=w.add;
+  $("backFromYear").textContent=w.back;
+  $("backFromMonth").textContent=w.back;
+  $("toggleCats").textContent=expanded?w.showLess:w.viewAll;
+  $("tabIncome").textContent=w.income;
+  $("tabExpenses").textContent=w.expenses;
+  $("amount").placeholder=w.amount;
+  $("category").placeholder=w.category;
+  $("note").placeholder=w.note;
+  $("saveBtn").textContent=w.add;
+  $("cancelAdd").textContent=w.back;
+}
+
+function setHomeFilter(f){
+  filter=f;
+  $("homeIncomeBox").classList.toggle("active",f==="income");
+  $("homeExpensesBox").classList.toggle("active",f==="expenses");
+  renderHome();
+}
+
+function renderHome(){
+  const now=new Date();
+  let inc=0,out=0,cats={};
+  entries.forEach(e=>{
+    const d=new Date(e.date);
+    if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
+      if(e.type==="income") inc+=e.amount;
+      if(e.type==="expenses"){
+        out+=e.amount;
+        if(filter==="expenses") cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
+      if(filter==="income" && e.type==="income"){
+        cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
+    }
+  });
+  $("homeBalance").textContent=fmt(inc-out);
+  $("homeIncome").textContent=fmt(inc);
+  $("homeExpenses").textContent=fmt(out);
+
+  const all=Object.entries(cats);
+  const shown=expanded?all:all.slice(0,3);
+  $("homeCats").innerHTML="";
+  shown.forEach(([k,v])=>{
+    $("homeCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
+  });
+  $("toggleCats").style.display=all.length>3?"block":"none";
+}
+
+function renderYear(){
+  const map={};
+  entries.forEach(e=>{
+    const d=new Date(e.date);
+    const k=`${d.getFullYear()}-${d.getMonth()}`;
+    map[k]=map[k]||{income:0,expenses:0};
+    map[k][e.type]+=e.amount;
+  });
+  $("yearList").innerHTML="";
+  Object.keys(map).sort().reverse().forEach(k=>{
+    const [y,m]=k.split("-");
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${MONTHS[lang][m]} ${y}</span><strong>${fmt(map[k].income-map[k].expenses)}</strong>`;
+    li.onclick=()=>openMonth(k);
+    $("yearList").appendChild(li);
+  });
+}
+
+function openMonth(k){
+  currentMonthKey=k;
+  filter="expenses";
+  $("monthIncomeBox").classList.remove("active");
+  $("monthExpensesBox").classList.add("active");
+  show("month");
+  renderMonth();
+}
+
+function setMonthFilter(f){
+  filter=f;
+  $("monthIncomeBox").classList.toggle("active",f==="income");
+  $("monthExpensesBox").classList.toggle("active",f==="expenses");
+  renderMonth();
+}
+
+function renderMonth(){
+  const [y,m]=currentMonthKey.split("-");
+  let inc=0,out=0,cats={};
+  entries.forEach(e=>{
+    const d=new Date(e.date);
+    if(d.getFullYear()==y&&d.getMonth()==m){
+      if(e.type==="income") inc+=e.amount;
+      if(e.type==="expenses"){
+        out+=e.amount;
+        if(filter==="expenses") cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
+      if(filter==="income" && e.type==="income"){
+        cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
+    }
+  });
+  $("monthTitle").textContent=`${MONTHS[lang][m]} ${y}`;
+  $("monthBalance").textContent=fmt(inc-out);
+  $("monthIncome").textContent=fmt(inc);
+  $("monthExpenses").textContent=fmt(out);
+  $("monthCats").innerHTML="";
+  Object.entries(cats).forEach(([k,v])=>{
+    $("monthCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
+  });
+}
+
+$("langToggle").onclick=()=>{
+  lang=lang==="EN"?"SW":"EN";
+  localStorage.setItem("lang",lang);
+  applyLang();
+  renderHome();
+  if(currentMonthKey) renderMonth();
+};
+
+$("homeIncomeBox").onclick=()=>setHomeFilter("income");
+$("homeExpensesBox").onclick=()=>setHomeFilter("expenses");
+$("monthIncomeBox").onclick=()=>setMonthFilter("income");
+$("monthExpensesBox").onclick=()=>setMonthFilter("expenses");
+
+$("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome()};
+$("yearBtn").onclick=()=>{renderYear();show("year")};
+$("backFromYear").onclick=()=>show("home");
+$("backFromMonth").onclick=()=>show("home");
+$("addBtn").onclick=()=>show("add");
+$("cancelAdd").onclick=()=>show("home");
+
+$("saveBtn").onclick=()=>{
+  const amt=Number($("amount").value);
+  if(!amt)return;
+  entries.push({
+    type:$("tabIncome").classList.contains("active")?"income":"expenses",
+    amount:amt,
+    category:$("category").value||WORDS[lang].other,
+    note:$("note").value||"",
+    date:new Date().toISOString()
+  });
+  localStorage.setItem("senti",JSON.stringify(entries));
+  $("amount").value=$("category").value=$("note").value="";
+  show("home");
+  setHomeFilter("expenses");
+};
+
+$("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
+$("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
+
+applyLang();
+setHomeFilter("expenses");
 </script>
 
 </body>
-  </html>
+      </html>

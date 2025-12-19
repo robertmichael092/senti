@@ -1,129 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Senti</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Senti</title>
 
-<style>
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #faf9f6;
-    margin: 0;
-    padding: 20px;
-    color: #111;
-  }
-  h1 {
-    font-size: 40px;
-    margin: 0 0 10px;
-  }
-  button {
-    border-radius: 14px;
-    border: none;
-    padding: 14px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  .pill {
-    background: #eee;
-    padding: 8px 14px;
-    border-radius: 12px;
-  }
-  .card {
-    background: white;
-    border-radius: 20px;
-    padding: 18px;
-    margin-bottom: 16px;
-  }
-  .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .muted {
-    color: #777;
-  }
-  .green {
-    color: #1e7f57;
-    font-weight: 600;
-  }
-  .red {
-    color: #c24a3a;
-    font-weight: 600;
-  }
-  .primary {
-    background: #1e7f57;
-    color: white;
-    width: 100%;
-    font-size: 18px;
-    margin-top: 16px;
-  }
-  .hidden {
-    display: none;
-  }
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-  }
-  input {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 10px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-  }
-  .tabs {
-    display: flex;
-    margin-bottom: 12px;
-  }
-  .tab {
-    flex: 1;
-    padding: 12px;
-    text-align: center;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-  }
-  .tab.active {
-    background: #1e7f57;
-    color: white;
-    border-color: #1e7f57;
-  }
-</style>
+  <style>
+    :root {
+      --green: #1e7f57;
+      --red: #c0392b;
+      --bg: #faf9f6;
+      --card: #ffffff;
+      --text: #111;
+      --muted: #777;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+    }
+
+    .logo {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .logo .dot {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #eee;
+    }
+
+    .primary {
+      background: var(--green);
+      color: #fff;
+      width: 100%;
+      padding: 18px;
+      font-size: 18px;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 16px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .amount {
+      font-size: 40px;
+      font-weight: 700;
+    }
+
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .toggle {
+      margin-top: 10px;
+      color: var(--green);
+      background: #eef5f1;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+    }
+
+    .tabs {
+      display: flex;
+      margin-top: 12px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      background: #eee;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--green);
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
 
+<header>
+  <div class="logo">Senti<span class="dot">•</span></div>
+  <button id="goYear">Year</button>
+</header>
+
 <!-- HOME -->
 <section id="home" class="screen">
-  <div class="row">
-    <h1>Senti</h1>
-    <button id="goYear" class="pill">Year</button>
-  </div>
-
   <div class="card">
     <div class="muted">This Month</div>
-    <h1 id="homeBalance">0</h1>
+    <div class="amount" id="homeBalance">0</div>
+
     <div class="row">
-      <div id="homeIn" class="green">0</div>
-      <div id="homeOut" class="red">0</div>
+      <div class="green" id="homeIn">0</div>
+      <div class="red" id="homeOut">0</div>
     </div>
   </div>
 
   <div class="card">
     <h3>Where your money went</h3>
     <ul id="homeCats"></ul>
-    <button id="toggleCats" class="pill hidden">View all categories</button>
+    <button id="toggleCats" class="toggle hidden">View all categories</button>
   </div>
 
-  <button id="goAdd" class="primary">+ Add Entry</button>
+  <div class="card">
+    <button class="primary" id="goAdd">+ Add Entry</button>
+  </div>
 </section>
 
 <!-- YEAR -->
@@ -131,148 +179,217 @@
   <div class="card">
     <h2>This Year</h2>
     <ul id="yearList"></ul>
-    <button id="backHome" class="pill">Back</button>
+    <button id="backHome" class="toggle">Back</button>
+  </div>
+</section>
+
+<!-- MONTH -->
+<section id="month" class="screen hidden">
+  <div class="card">
+    <h2 id="monthTitle"></h2>
+    <div class="amount" id="monthBalance">0</div>
+    <div class="row">
+      <div class="green" id="monthIn">0</div>
+      <div class="red" id="monthOut">0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Where your money went</h3>
+    <ul id="monthCats"></ul>
+  </div>
+
+  <div class="card">
+    <button id="backYear" class="toggle">Back to Year</button>
+  </div>
+</section>
+
+<!-- LIST -->
+<section id="list" class="screen hidden">
+  <div class="card">
+    <h2 id="listTitle"></h2>
+    <ul id="listItems"></ul>
+    <button id="backMonth" class="toggle">Back</button>
   </div>
 </section>
 
 <!-- ADD -->
 <section id="add" class="screen hidden">
-  <h2>Add Entry</h2>
+  <div class="card">
+    <h2>Add Entry</h2>
 
-  <div class="tabs">
-    <div id="typeOut" class="tab active">Out</div>
-    <div id="typeIn" class="tab">In</div>
+    <div class="tabs">
+      <div class="tab active" id="typeOut">Out</div>
+      <div class="tab" id="typeIn">In</div>
+    </div>
+
+    <input id="amount" placeholder="Amount" type="number" />
+    <input id="category" placeholder="Category" />
+    <input id="note" placeholder="Note (optional)" />
+
+    <button class="primary" id="save">Save</button>
+    <button id="cancel" class="toggle">Cancel</button>
   </div>
-
-  <input id="amount" type="number" placeholder="Amount" />
-  <input id="category" placeholder="Category" />
-  <input id="note" placeholder="Note (optional)" />
-
-  <button id="save" class="primary">Save</button>
-  <button id="cancel" class="pill">Cancel</button>
 </section>
 
 <script>
-/* ========= DATA ========= */
-let entries = JSON.parse(localStorage.getItem("senti") || "[]");
-let entryType = "out";
-let catsExpanded = false;
+  const screens = document.querySelectorAll(".screen");
+  const fmt = n => n.toLocaleString();
 
-/* ========= HELPERS ========= */
-function fmt(n) {
-  return Number(n || 0).toLocaleString("en-US");
-}
+  let entries = JSON.parse(localStorage.getItem("senti") || "[]");
+  let entryType = "out";
+  let catsExpanded = false;
+  let currentMonthKey = null;
 
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
+  function show(id) {
+    screens.forEach(s => s.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+  }
 
-function monthKey(d) {
-  return d.getFullYear() + "-" + d.getMonth();
-}
+  function monthKey(d) {
+    return d.getFullYear() + "-" + d.getMonth();
+  }
 
-function monthLabel(key) {
-  const [y, m] = key.split("-");
-  return new Date(y, m).toLocaleString("default", { month: "long", year: "numeric" });
-}
+  function monthLabel(key) {
+    const [y, m] = key.split("-");
+    return new Date(y, m).toLocaleString(undefined, { month: "long", year: "numeric" });
+  }
 
-/* ========= HOME ========= */
-function renderHome() {
-  const now = new Date();
-  let inc = 0, out = 0, cats = {};
+  function renderHome() {
+    const now = new Date();
+    let inc = 0, out = 0, cats = {};
 
-  entries.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-      if (e.type === "in") inc += e.amount;
-      else {
-        out += e.amount;
-        cats[e.category] = (cats[e.category] || 0) + e.amount;
+    entries.forEach(e => {
+      const d = new Date(e.date);
+      if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+        if (e.type === "in") inc += e.amount;
+        else {
+          out += e.amount;
+          cats[e.category] = (cats[e.category] || 0) + e.amount;
+        }
       }
-    }
-  });
+    });
 
-  homeBalance.textContent = fmt(inc - out);
-  homeIn.textContent = fmt(inc);
-  homeOut.textContent = fmt(out);
+    homeBalance.textContent = fmt(inc - out);
+    homeIn.textContent = fmt(inc);
+    homeOut.textContent = fmt(out);
 
-  homeCats.innerHTML = "";
-  const all = Object.entries(cats);
-  const visible = catsExpanded ? all : all.slice(0, 4);
+    homeCats.innerHTML = "";
+    const all = Object.entries(cats);
+    const visible = catsExpanded ? all : all.slice(0, 3);
 
-  visible.forEach(([c, v]) => {
-    homeCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
-  });
+    visible.forEach(([c, v]) => {
+      homeCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
+    });
 
-  toggleCats.classList.toggle("hidden", all.length <= 4);
-  toggleCats.textContent = catsExpanded ? "Show less" : "View all categories";
-}
+    toggleCats.classList.toggle("hidden", all.length <= 3);
+    toggleCats.textContent = catsExpanded ? "Show less" : "View all categories";
+  }
 
-/* ========= YEAR ========= */
-function renderYear() {
-  const map = {};
-  entries.forEach(e => {
-    const k = monthKey(new Date(e.date));
-    map[k] = map[k] || { in: 0, out: 0 };
-    map[k][e.type] += e.amount;
-  });
+  function renderYear() {
+    const map = {};
+    entries.forEach(e => {
+      const k = monthKey(new Date(e.date));
+      map[k] = map[k] || { in: 0, out: 0 };
+      map[k][e.type] += e.amount;
+    });
 
-  yearList.innerHTML = "";
-  Object.keys(map).sort().reverse().forEach(k => {
-    const bal = map[k].in - map[k].out;
-    yearList.innerHTML += `
-      <li onclick="openMonth('${k}')">
-        <span>${monthLabel(k)}</span>
-        <strong>${fmt(bal)}</strong>
-      </li>`;
-  });
-}
+    yearList.innerHTML = "";
+    Object.keys(map).sort().reverse().forEach(k => {
+      const bal = map[k].in - map[k].out;
+      yearList.innerHTML += `
+        <li onclick="openMonth('${k}')">
+          <span>${monthLabel(k)}</span>
+          <strong>${fmt(bal)}</strong>
+        </li>`;
+    });
+  }
 
-/* ========= EVENTS ========= */
-goAdd.onclick = () => show("add");
-cancel.onclick = () => show("home");
-goYear.onclick = () => { renderYear(); show("year"); };
-backHome.onclick = () => show("home");
+  function openMonth(key) {
+    currentMonthKey = key;
+    show("month");
 
-toggleCats.onclick = () => {
-  catsExpanded = !catsExpanded;
+    let inc = 0, out = 0, cats = {};
+    entries.forEach(e => {
+      if (monthKey(new Date(e.date)) === key) {
+        if (e.type === "in") inc += e.amount;
+        else {
+          out += e.amount;
+          cats[e.category] = (cats[e.category] || 0) + e.amount;
+        }
+      }
+    });
+
+    monthTitle.textContent = monthLabel(key);
+    monthBalance.textContent = fmt(inc - out);
+    monthIn.textContent = fmt(inc);
+    monthOut.textContent = fmt(out);
+
+    monthCats.innerHTML = "";
+    Object.entries(cats).forEach(([c, v]) => {
+      monthCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
+    });
+  }
+
+  function openList(type) {
+    show("list");
+    listTitle.textContent = type === "in" ? "Money In" : "Money Out";
+    listItems.innerHTML = "";
+
+    entries.forEach(e => {
+      if (e.type === type && (!currentMonthKey || monthKey(new Date(e.date)) === currentMonthKey)) {
+        listItems.innerHTML += `<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`;
+      }
+    });
+  }
+
+  goAdd.onclick = () => show("add");
+  cancel.onclick = () => show("home");
+
+  goYear.onclick = () => { renderYear(); show("year"); };
+  backHome.onclick = () => show("home");
+  backYear.onclick = () => show("year");
+  backMonth.onclick = () => show("month");
+
+  toggleCats.onclick = () => { catsExpanded = !catsExpanded; renderHome(); };
+
+  homeIn.onclick = () => openList("in");
+  homeOut.onclick = () => openList("out");
+  monthIn.onclick = () => openList("in");
+  monthOut.onclick = () => openList("out");
+
+  typeOut.onclick = () => {
+    entryType = "out";
+    typeOut.classList.add("active");
+    typeIn.classList.remove("active");
+  };
+
+  typeIn.onclick = () => {
+    entryType = "in";
+    typeIn.classList.add("active");
+    typeOut.classList.remove("active");
+  };
+
+  save.onclick = () => {
+    const amt = Number(amount.value);
+    if (!amt) return;
+
+    entries.push({
+      type: entryType,
+      amount: amt,
+      category: category.value || "Other",
+      note: note.value || "",
+      date: new Date().toISOString()
+    });
+
+    localStorage.setItem("senti", JSON.stringify(entries));
+    amount.value = category.value = note.value = "";
+    show("home");
+    renderHome();
+  };
+
   renderHome();
-};
-
-typeOut.onclick = () => {
-  entryType = "out";
-  typeOut.classList.add("active");
-  typeIn.classList.remove("active");
-};
-
-typeIn.onclick = () => {
-  entryType = "in";
-  typeIn.classList.add("active");
-  typeOut.classList.remove("active");
-};
-
-save.onclick = () => {
-  const amt = Number(amount.value);
-  if (!amt || amt <= 0) return;
-
-  entries.push({
-    type: entryType,
-    amount: amt,
-    category: category.value || "Other",
-    note: note.value || "",
-    date: new Date().toISOString()
-  });
-
-  localStorage.setItem("senti", JSON.stringify(entries));
-  amount.value = category.value = note.value = "";
-  show("home");
-  renderHome();
-};
-
-/* ========= INIT ========= */
-renderHome();
 </script>
 
 </body>
-</html>
+      </html>

@@ -1,8 +1,7 @@
 {
   "name": "Senti",
   "short_name": "Senti",
-  "description": "Care for every senti. Offline personal finance.",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fbf7f2",
   "theme_color": "#1f7f55",

@@ -14,7 +14,7 @@
 }
 body{
   margin:0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   background:var(--bg);
   color:#111;
 }
@@ -32,13 +32,11 @@ header{
   font-size:34px;
   font-weight:800;
 }
-.logo span{
-  color:var(--green);
-}
+.logo span{color:var(--green)}
 .header-right{
   display:flex;
-  gap:8px;
   align-items:center;
+  gap:10px;
 }
 .lang{
   font-weight:600;
@@ -67,6 +65,13 @@ header{
   justify-content:space-between;
   margin-top:10px;
 }
+.col{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  cursor:pointer;
+}
+.label{font-size:14px;color:#666}
 .in{color:var(--green)}
 .out{color:var(--red)}
 
@@ -93,7 +98,7 @@ header{
   color:var(--green);
 }
 
-/* Add */
+/* Add Entry */
 input{
   width:100%;
   padding:14px;
@@ -135,13 +140,19 @@ input{
     <div id="homeTitle"></div>
     <div class="big" id="homeBalance">0</div>
     <div class="row">
-      <div class="in" id="homeIn"></div>
-      <div class="out" id="homeOut"></div>
+      <div class="col in" id="homeIncome">
+        <div class="label" id="incomeLabel"></div>
+        <strong id="incomeValue">0</strong>
+      </div>
+      <div class="col out" id="homeExpenses">
+        <div class="label" id="expensesLabel"></div>
+        <strong id="expensesValue">0</strong>
+      </div>
     </div>
   </div>
 
   <div class="card">
-    <h3 id="whereTitle"></h3>
+    <h3 id="spendingTitle"></h3>
     <ul class="list" id="homeCats"></ul>
     <div class="btn light hidden" id="toggleCats"></div>
   </div>
@@ -162,10 +173,10 @@ input{
 <section id="add" class="hidden">
   <div class="card">
     <div class="type-toggle">
-      <div id="typeIn" class="active"></div>
-      <div id="typeOut"></div>
+      <div id="typeIncome" class="active"></div>
+      <div id="typeExpenses"></div>
     </div>
-    <input id="amount" type="number" placeholder="0"/>
+    <input id="amount" type="number"/>
     <input id="category"/>
     <input id="note"/>
     <div class="btn" id="save"></div>
@@ -176,7 +187,7 @@ input{
 </div>
 
 <script>
-/* ---------- LANGUAGE ---------- */
+/* ---------- LANGUAGE SPEC ---------- */
 const MONTHS = {
   EN:["January","February","March","April","May","June","July","August","September","October","November","December"],
   SW:["Januari","Februari","Machi","Aprili","Mei","Juni","Julai","Agosti","Septemba","Oktoba","Novemba","Desemba"]
@@ -185,48 +196,52 @@ const MONTHS = {
 const TEXT = {
   EN:{
     thisMonth:"This Month",
-    moneyIn:"Money In",
-    moneyOut:"Money Out",
-    where:"Where your money went",
-    add:"Add Entry",
+    thisYear:"This Year",
+    income:"Income",
+    expenses:"Expenses",
+    balance:"Balance",
+    spending:"Your expenses",
     viewAll:"View all categories",
     showLess:"Show less",
-    year:"Year",
-    thisYear:"This Year",
+    add:"Add",
     back:"Back",
-    in:"Money In",
-    out:"Money Out"
+    amount:"Amount",
+    category:"Category",
+    note:"Note (optional)",
+    other:"Other"
   },
   SW:{
     thisMonth:"Mwezi huu",
-    moneyIn:"Mapato",
-    moneyOut:"Matumizi",
-    where:"Matumizi yako",
-    add:"Ongeza",
-    viewAll:"Tazama yote",
-    showLess:"Ficha",
-    year:"Mwaka",
     thisYear:"Mwaka huu",
+    income:"Mapato",
+    expenses:"Matumizi",
+    balance:"Salio",
+    spending:"Matumizi yako",
+    viewAll:"Tazama aina zote",
+    showLess:"Onyesha chache",
+    add:"Ongeza",
     back:"Rudi",
-    in:"Mapato",
-    out:"Matumizi"
+    amount:"Kiasi",
+    category:"Aina",
+    note:"Maelezo (hiari)",
+    other:"Nyingine"
   }
 };
 
 let lang = localStorage.getItem("lang") || "EN";
-langToggle.onclick = () => {
+langToggle.onclick=()=>{
   lang = lang==="EN"?"SW":"EN";
   localStorage.setItem("lang",lang);
   renderHome();
 };
 
-function t(k){ return TEXT[lang][k]; }
-function fmt(n){ return n.toLocaleString(); }
+const t=k=>TEXT[lang][k];
+const fmt=n=>n.toLocaleString();
 
 /* ---------- DATA ---------- */
 let entries = JSON.parse(localStorage.getItem("senti")||"[]");
 let expanded=false;
-let type="in";
+let entryType="income";
 
 /* ---------- NAV ---------- */
 function show(id){
@@ -237,16 +252,21 @@ function show(id){
 /* ---------- HOME ---------- */
 function renderHome(){
   langToggle.textContent=lang;
-  goYear.textContent=t("year");
+  goYear.textContent="Year";
   homeTitle.textContent=t("thisMonth");
+
+  incomeLabel.textContent=t("income");
+  expensesLabel.textContent=t("expenses");
+  spendingTitle.textContent=t("spending");
+  goAdd.textContent=t("add");
 
   const now=new Date();
   let inc=0,out=0,cats={};
 
   entries.forEach(e=>{
     const d=new Date(e.date);
-    if(d.getMonth()==now.getMonth()&&d.getFullYear()==now.getFullYear()){
-      if(e.type==="in") inc+=e.amount;
+    if(d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear()){
+      if(e.type==="income") inc+=e.amount;
       else{
         out+=e.amount;
         cats[e.category]=(cats[e.category]||0)+e.amount;
@@ -255,10 +275,9 @@ function renderHome(){
   });
 
   homeBalance.textContent=fmt(inc-out);
-  homeIn.textContent=`${t("moneyIn")} ${fmt(inc)}`;
-  homeOut.textContent=`${t("moneyOut")} ${fmt(out)}`;
+  incomeValue.textContent=fmt(inc);
+  expensesValue.textContent=fmt(out);
 
-  whereTitle.textContent=t("where");
   homeCats.innerHTML="";
   const all=Object.entries(cats);
   (expanded?all:all.slice(0,3)).forEach(([c,v])=>{
@@ -267,7 +286,6 @@ function renderHome(){
 
   toggleCats.classList.toggle("hidden",all.length<=3);
   toggleCats.textContent=expanded?t("showLess"):t("viewAll");
-  goAdd.textContent=t("add");
 }
 
 /* ---------- YEAR ---------- */
@@ -279,25 +297,34 @@ function renderYear(){
   entries.forEach(e=>{
     const d=new Date(e.date);
     const k=`${d.getFullYear()}-${d.getMonth()}`;
-    map[k]=map[k]||{in:0,out:0};
+    map[k]=map[k]||{income:0,expenses:0};
     map[k][e.type]+=e.amount;
   });
 
   Object.keys(map).sort().reverse().forEach(k=>{
     const [y,m]=k.split("-");
     const label=`${MONTHS[lang][m]} ${y}`;
-    const bal=map[k].in-map[k].out;
-    yearList.innerHTML+=`<li><span>${label}</span><strong>${fmt(bal)}</strong></li>`;
+    const bal=map[k].income-map[k].expenses;
+    yearList.innerHTML+=`
+      <li style="cursor:pointer">
+        <span>${label}</span>
+        <strong>${fmt(bal)}</strong>
+      </li>`;
   });
 
   backHome.textContent=t("back");
 }
 
 /* ---------- ADD ---------- */
-typeIn.textContent=t("in");
-typeOut.textContent=t("out");
-typeIn.onclick=()=>{type="in";typeIn.classList.add("active");typeOut.classList.remove("active")};
-typeOut.onclick=()=>{type="out";typeOut.classList.add("active");typeIn.classList.remove("active")};
+typeIncome.textContent=t("income");
+typeExpenses.textContent=t("expenses");
+
+typeIncome.onclick=()=>{entryType="income";typeIncome.classList.add("active");typeExpenses.classList.remove("active")};
+typeExpenses.onclick=()=>{entryType="expenses";typeExpenses.classList.add("active");typeIncome.classList.remove("active")};
+
+amount.placeholder=t("amount");
+category.placeholder=t("category");
+note.placeholder=t("note");
 
 save.textContent=t("add");
 cancel.textContent=t("back");
@@ -306,9 +333,9 @@ save.onclick=()=>{
   const amt=Number(amount.value);
   if(!amt)return;
   entries.push({
-    type,
+    type:entryType,
     amount:amt,
-    category:category.value||"Other",
+    category:category.value || t("other"),
     note:note.value||"",
     date:new Date().toISOString()
   });
@@ -325,8 +352,11 @@ backHome.onclick=()=>show("home");
 toggleCats.onclick=()=>{expanded=!expanded;renderHome()};
 cancel.onclick=()=>show("home");
 
+homeIncome.onclick=()=>{};
+homeExpenses.onclick=()=>{};
+
 /* INIT */
 renderHome();
 </script>
 </body>
-      </html>
+                                              </html>

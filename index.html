@@ -2,208 +2,252 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Senti</title>
 
 <style>
 :root{
-  --green:#1f7f55;
-  --red:#b54747;
-  --bg:#faf7f2;
+  --bg:#fbf7f2;
   --card:#ffffff;
+  --green:#1f7f55;
+  --green-soft:#e6f2ec;
+  --red:#c84a4a;
+  --text:#111;
+  --muted:#777;
+  --border:#e6e6e6;
 }
+
+*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;
   background:var(--bg);
-  color:#111;
+  color:var(--text);
 }
-.hidden{display:none}
-.app{max-width:420px;margin:auto;padding:16px}
 
-/* Header */
+.hidden{display:none}
+
 header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:12px;
-}
-.logo{
-  font-size:34px;
-  font-weight:800;
-}
-.logo span{color:var(--green)}
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.lang{
-  font-weight:600;
-  cursor:pointer;
-}
-.year-btn{
-  background:#eee;
-  border-radius:999px;
-  padding:8px 14px;
-  cursor:pointer;
-}
-
-/* Cards */
-.card{
-  background:var(--card);
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:16px;
-}
-.big{
-  font-size:44px;
-  font-weight:800;
-}
-.row{
-  display:flex;
-  justify-content:space-between;
-  margin-top:10px;
-}
-.col{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  cursor:pointer;
-}
-.label{font-size:14px;color:#666}
-.in{color:var(--green)}
-.out{color:var(--red)}
-
-.list li{
-  display:flex;
-  justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid #eee;
-}
-.list li:last-child{border-bottom:none}
-
-.btn{
-  background:var(--green);
-  color:#fff;
   padding:16px;
-  border-radius:999px;
-  text-align:center;
-  font-size:18px;
-  margin-top:16px;
-  cursor:pointer;
 }
-.btn.light{
-  background:#e8f3ee;
+
+.logo{
+  font-size:36px;
+  font-weight:800;
+}
+.logo span{
   color:var(--green);
 }
 
-/* Add Entry */
+.top-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.lang{
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn-pill{
+  background:#eee;
+  border:none;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+main{padding:0 16px 32px}
+
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:16px;
+}
+
+.balance-title{
+  color:var(--muted);
+  font-weight:600;
+}
+
+.balance{
+  font-size:48px;
+  font-weight:800;
+  margin:8px 0 12px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.money-in{color:var(--green);font-weight:700;cursor:pointer}
+.money-out{color:var(--red);font-weight:700;cursor:pointer}
+
+.section-title{
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.list li{
+  list-style:none;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  cursor:pointer;
+}
+
+.list li:last-child{border-bottom:none}
+
+.soft-btn{
+  margin-top:12px;
+  background:var(--green-soft);
+  color:var(--green);
+  border:none;
+  padding:12px;
+  width:100%;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.primary-btn{
+  margin-top:16px;
+  background:var(--green);
+  color:#fff;
+  border:none;
+  padding:18px;
+  width:100%;
+  border-radius:999px;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.tabs{
+  display:flex;
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+
+.tab{
+  flex:1;
+  padding:12px;
+  text-align:center;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.tab.active{
+  background:var(--green);
+  color:#fff;
+}
+
 input{
   width:100%;
   padding:14px;
-  margin-top:10px;
+  margin-bottom:12px;
+  border-radius:6px;
+  border:1px solid var(--border);
   font-size:16px;
-}
-.type-toggle{
-  display:flex;
-  margin-bottom:10px;
-}
-.type-toggle div{
-  flex:1;
-  padding:14px;
-  text-align:center;
-  border:1px solid #ddd;
-  cursor:pointer;
-}
-.type-toggle .active{
-  background:var(--green);
-  color:#fff;
 }
 </style>
 </head>
 
 <body>
-<div class="app">
 
 <header>
   <div class="logo">Senti<span>•</span></div>
-  <div class="header-right">
+  <div class="top-actions">
     <div class="lang" id="langToggle">EN</div>
-    <div class="year-btn" id="goYear"></div>
+    <button class="btn-pill" id="yearBtn">Year</button>
   </div>
 </header>
+
+<main>
 
 <!-- HOME -->
 <section id="home">
   <div class="card">
-    <div id="homeTitle"></div>
-    <div class="big" id="homeBalance">0</div>
+    <div class="balance-title" id="homeTitle">This Month</div>
+    <div class="balance" id="homeBalance">0</div>
     <div class="row">
-      <div class="col in" id="homeIncome">
-        <div class="label" id="incomeLabel"></div>
-        <strong id="incomeValue">0</strong>
-      </div>
-      <div class="col out" id="homeExpenses">
-        <div class="label" id="expensesLabel"></div>
-        <strong id="expensesValue">0</strong>
-      </div>
+      <div class="money-in" id="homeIn"></div>
+      <div class="money-out" id="homeOut"></div>
     </div>
   </div>
 
   <div class="card">
-    <h3 id="spendingTitle"></h3>
+    <div class="section-title" id="whereTitle">Where your money went</div>
     <ul class="list" id="homeCats"></ul>
-    <div class="btn light hidden" id="toggleCats"></div>
+    <button class="soft-btn" id="toggleCats"></button>
   </div>
 
-  <div class="btn" id="goAdd"></div>
+  <button class="primary-btn" id="addBtn"></button>
 </section>
 
 <!-- YEAR -->
 <section id="year" class="hidden">
   <div class="card">
-    <h2 id="yearTitle"></h2>
+    <div class="section-title" id="yearTitle">This Year</div>
     <ul class="list" id="yearList"></ul>
-    <div class="btn light" id="backHome"></div>
+    <button class="soft-btn" id="backFromYear"></button>
+  </div>
+</section>
+
+<!-- MONTH -->
+<section id="month" class="hidden">
+  <div class="card">
+    <div class="section-title" id="monthTitle"></div>
+    <div class="balance" id="monthBalance"></div>
+    <div class="row">
+      <div class="money-in" id="monthIn"></div>
+      <div class="money-out" id="monthOut"></div>
+    </div>
+    <ul class="list" id="monthCats"></ul>
+    <button class="soft-btn" id="backFromMonth"></button>
   </div>
 </section>
 
 <!-- ADD -->
 <section id="add" class="hidden">
   <div class="card">
-    <div class="type-toggle">
-      <div id="typeIncome" class="active"></div>
-      <div id="typeExpenses"></div>
+    <div class="tabs">
+      <div class="tab active" id="tabIn"></div>
+      <div class="tab" id="tabOut"></div>
     </div>
-    <input id="amount" type="number"/>
-    <input id="category"/>
-    <input id="note"/>
-    <div class="btn" id="save"></div>
-    <div class="btn light" id="cancel"></div>
+    <input id="amount" />
+    <input id="category" />
+    <input id="note" />
+    <button class="primary-btn" id="saveBtn"></button>
+    <button class="soft-btn" id="cancelAdd"></button>
   </div>
 </section>
 
-</div>
+</main>
 
 <script>
-/* ---------- LANGUAGE SPEC ---------- */
-const MONTHS = {
-  EN:["January","February","March","April","May","June","July","August","September","October","November","December"],
-  SW:["Januari","Februari","Machi","Aprili","Mei","Juni","Julai","Agosti","Septemba","Oktoba","Novemba","Desemba"]
-};
-
-const TEXT = {
+const words={
   EN:{
     thisMonth:"This Month",
     thisYear:"This Year",
     income:"Income",
     expenses:"Expenses",
-    balance:"Balance",
-    spending:"Your expenses",
+    where:"Where your money went",
     viewAll:"View all categories",
     showLess:"Show less",
-    add:"Add",
+    add:"Add Entry",
     back:"Back",
     amount:"Amount",
     category:"Category",
@@ -215,10 +259,9 @@ const TEXT = {
     thisYear:"Mwaka huu",
     income:"Mapato",
     expenses:"Matumizi",
-    balance:"Salio",
-    spending:"Matumizi yako",
-    viewAll:"Tazama aina zote",
-    showLess:"Onyesha chache",
+    where:"Matumizi yako",
+    viewAll:"Tazama yote",
+    showLess:"Onyesha kidogo",
     add:"Ongeza",
     back:"Rudi",
     amount:"Kiasi",
@@ -228,135 +271,142 @@ const TEXT = {
   }
 };
 
-let lang = localStorage.getItem("lang") || "EN";
-langToggle.onclick=()=>{
-  lang = lang==="EN"?"SW":"EN";
-  localStorage.setItem("lang",lang);
-  renderHome();
-};
+let lang="EN";
+let entries=JSON.parse(localStorage.getItem("senti")||"[]");
+let expanded=false;
+let type="in";
+let currentMonth=null;
 
-const t=k=>TEXT[lang][k];
+const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString();
 
-/* ---------- DATA ---------- */
-let entries = JSON.parse(localStorage.getItem("senti")||"[]");
-let expanded=false;
-let entryType="income";
-
-/* ---------- NAV ---------- */
 function show(id){
-  ["home","year","add"].forEach(s=>document.getElementById(s).classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
+  ["home","year","month","add"].forEach(s=>$(s).classList.add("hidden"));
+  $(id).classList.remove("hidden");
 }
 
-/* ---------- HOME ---------- */
+function applyLang(){
+  const w=words[lang];
+  $("langToggle").textContent=lang;
+  $("homeTitle").textContent=w.thisMonth;
+  $("yearTitle").textContent=w.thisYear;
+  $("whereTitle").textContent=w.where;
+  $("toggleCats").textContent=expanded?w.showLess:w.viewAll;
+  $("addBtn").textContent=w.add;
+  $("backFromYear").textContent=w.back;
+  $("backFromMonth").textContent=w.back;
+  $("tabIn").textContent=w.income;
+  $("tabOut").textContent=w.expenses;
+  $("amount").placeholder=w.amount;
+  $("category").placeholder=w.category;
+  $("note").placeholder=w.note;
+  $("saveBtn").textContent=w.add;
+  $("cancelAdd").textContent=w.back;
+}
+
 function renderHome(){
-  langToggle.textContent=lang;
-  goYear.textContent="Year";
-  homeTitle.textContent=t("thisMonth");
-
-  incomeLabel.textContent=t("income");
-  expensesLabel.textContent=t("expenses");
-  spendingTitle.textContent=t("spending");
-  goAdd.textContent=t("add");
-
   const now=new Date();
   let inc=0,out=0,cats={};
-
   entries.forEach(e=>{
     const d=new Date(e.date);
-    if(d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear()){
-      if(e.type==="income") inc+=e.amount;
+    if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
+      if(e.type==="in") inc+=e.amount;
       else{
         out+=e.amount;
         cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
   });
+  $("homeBalance").textContent=fmt(inc-out);
+  $("homeIn").textContent=`${words[lang].income} ${fmt(inc)}`;
+  $("homeOut").textContent=`${words[lang].expenses} ${fmt(out)}`;
 
-  homeBalance.textContent=fmt(inc-out);
-  incomeValue.textContent=fmt(inc);
-  expensesValue.textContent=fmt(out);
-
-  homeCats.innerHTML="";
-  const all=Object.entries(cats);
-  (expanded?all:all.slice(0,3)).forEach(([c,v])=>{
-    homeCats.innerHTML+=`<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
+  const list=Object.entries(cats);
+  const shown=expanded?list:list.slice(0,3);
+  $("homeCats").innerHTML="";
+  shown.forEach(([k,v])=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${k}</span><strong>${fmt(v)}</strong>`;
+    $("homeCats").appendChild(li);
   });
-
-  toggleCats.classList.toggle("hidden",all.length<=3);
-  toggleCats.textContent=expanded?t("showLess"):t("viewAll");
+  $("toggleCats").style.display=list.length>3?"block":"none";
 }
 
-/* ---------- YEAR ---------- */
 function renderYear(){
-  yearTitle.textContent=t("thisYear");
-  yearList.innerHTML="";
   const map={};
-
   entries.forEach(e=>{
     const d=new Date(e.date);
     const k=`${d.getFullYear()}-${d.getMonth()}`;
-    map[k]=map[k]||{income:0,expenses:0};
+    map[k]=map[k]||{in:0,out:0};
     map[k][e.type]+=e.amount;
   });
-
+  $("yearList").innerHTML="";
   Object.keys(map).sort().reverse().forEach(k=>{
     const [y,m]=k.split("-");
-    const label=`${MONTHS[lang][m]} ${y}`;
-    const bal=map[k].income-map[k].expenses;
-    yearList.innerHTML+=`
-      <li style="cursor:pointer">
-        <span>${label}</span>
-        <strong>${fmt(bal)}</strong>
-      </li>`;
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${new Date(y,m).toLocaleString(lang==="EN"?"en":"sw",{month:"long",year:"numeric"})}</span><strong>${fmt(map[k].in-map[k].out)}</strong>`;
+    li.onclick=()=>openMonth(k);
+    $("yearList").appendChild(li);
   });
-
-  backHome.textContent=t("back");
 }
 
-/* ---------- ADD ---------- */
-typeIncome.textContent=t("income");
-typeExpenses.textContent=t("expenses");
+function openMonth(k){
+  currentMonth=k;
+  const [y,m]=k.split("-");
+  let inc=0,out=0,cats={};
+  entries.forEach(e=>{
+    const d=new Date(e.date);
+    if(d.getFullYear()==y&&d.getMonth()==m){
+      if(e.type==="in") inc+=e.amount;
+      else{
+        out+=e.amount;
+        cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
+    }
+  });
+  $("monthTitle").textContent=new Date(y,m).toLocaleString(lang==="EN"?"en":"sw",{month:"long",year:"numeric"});
+  $("monthBalance").textContent=fmt(inc-out);
+  $("monthIn").textContent=`${words[lang].income} ${fmt(inc)}`;
+  $("monthOut").textContent=`${words[lang].expenses} ${fmt(out)}`;
+  $("monthCats").innerHTML="";
+  Object.entries(cats).forEach(([k,v])=>{
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${k}</span><strong>${fmt(v)}</strong>`;
+    $("monthCats").appendChild(li);
+  });
+  show("month");
+}
 
-typeIncome.onclick=()=>{entryType="income";typeIncome.classList.add("active");typeExpenses.classList.remove("active")};
-typeExpenses.onclick=()=>{entryType="expenses";typeExpenses.classList.add("active");typeIncome.classList.remove("active")};
+$("langToggle").onclick=()=>{lang=lang==="EN"?"SW":"EN";applyLang();renderHome();renderYear()};
+$("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome()};
+$("yearBtn").onclick=()=>{renderYear();show("year")};
+$("backFromYear").onclick=()=>show("home");
+$("backFromMonth").onclick=()=>show("home");
+$("addBtn").onclick=()=>show("add");
+$("cancelAdd").onclick=()=>show("home");
 
-amount.placeholder=t("amount");
-category.placeholder=t("category");
-note.placeholder=t("note");
+$("tabIn").onclick=()=>{type="in";$("tabIn").classList.add("active");$("tabOut").classList.remove("active")};
+$("tabOut").onclick=()=>{type="out";$("tabOut").classList.add("active");$("tabIn").classList.remove("active")};
 
-save.textContent=t("add");
-cancel.textContent=t("back");
-
-save.onclick=()=>{
-  const amt=Number(amount.value);
+$("saveBtn").onclick=()=>{
+  const amt=Number($("amount").value);
   if(!amt)return;
   entries.push({
-    type:entryType,
+    type,
     amount:amt,
-    category:category.value || t("other"),
-    note:note.value||"",
+    category:$("category").value||words[lang].other,
+    note:$("note").value||"",
     date:new Date().toISOString()
   });
   localStorage.setItem("senti",JSON.stringify(entries));
-  amount.value=category.value=note.value="";
+  $("amount").value=$("category").value=$("note").value="";
   show("home");
   renderHome();
 };
 
-/* ---------- EVENTS ---------- */
-goAdd.onclick=()=>show("add");
-goYear.onclick=()=>{renderYear();show("year")};
-backHome.onclick=()=>show("home");
-toggleCats.onclick=()=>{expanded=!expanded;renderHome()};
-cancel.onclick=()=>show("home");
-
-homeIncome.onclick=()=>{};
-homeExpenses.onclick=()=>{};
-
-/* INIT */
+applyLang();
 renderHome();
 </script>
+
 </body>
-  </html>
+      </html>

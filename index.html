@@ -166,14 +166,38 @@ input{
 
 <script>
 const WORDS={
-  EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
-      where:"Your expenses",viewAll:"View all categories",showLess:"Show less",
-      add:"Add",back:"Back",amount:"Amount",category:"Category",
-      note:"Note (optional)",other:"Other"},
-  SW:{thisMonth:"Mwezi huu",thisYear:"Mwaka huu",income:"Mapato",expenses:"Matumizi",
-      where:"Matumizi yako",viewAll:"Tazama aina zote",showLess:"Onyesha chache",
-      add:"Ongeza",back:"Rudi",amount:"Kiasi",category:"Aina",
-      note:"Maelezo (hiari)",other:"Nyingine"}
+  EN:{
+    thisMonth:"This Month",
+    thisYear:"This Year",
+    income:"Income",
+    expenses:"Expenses",
+    yourIncome:"Your income",
+    yourExpenses:"Your expenses",
+    viewAll:"View all categories",
+    showLess:"Show less",
+    add:"Add",
+    back:"Back",
+    amount:"Amount",
+    category:"Category",
+    note:"Note (optional)",
+    other:"Other"
+  },
+  SW:{
+    thisMonth:"Mwezi huu",
+    thisYear:"Mwaka huu",
+    income:"Mapato",
+    expenses:"Matumizi",
+    yourIncome:"Mapato yako",
+    yourExpenses:"Matumizi yako",
+    viewAll:"Tazama aina zote",
+    showLess:"Onyesha chache",
+    add:"Ongeza",
+    back:"Rudi",
+    amount:"Kiasi",
+    category:"Aina",
+    note:"Maelezo (hiari)",
+    other:"Nyingine"
+  }
 };
 
 const MONTHS={
@@ -204,7 +228,6 @@ function applyLang(){
   $("expensesLabel").textContent=w.expenses;
   $("monthIncomeLabel").textContent=w.income;
   $("monthExpensesLabel").textContent=w.expenses;
-  $("whereTitle").textContent=w.where;
   $("addBtn").textContent=w.add;
   $("backFromYear").textContent=w.back;
   $("backFromMonth").textContent=w.back;
@@ -232,18 +255,21 @@ function renderHome(){
     const d=new Date(e.date);
     if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
       if(e.type==="income") inc+=e.amount;
-      if(e.type==="expenses"){
-        out+=e.amount;
-        if(filter==="expenses") cats[e.category]=(cats[e.category]||0)+e.amount;
-      }
-      if(filter==="income" && e.type==="income"){
+      if(e.type==="expenses") out+=e.amount;
+      if(filter===e.type){
         cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
   });
+
   $("homeBalance").textContent=fmt(inc-out);
   $("homeIncome").textContent=fmt(inc);
   $("homeExpenses").textContent=fmt(out);
+
+  $("whereTitle").textContent =
+    filter==="income"
+      ? WORDS[lang].yourIncome
+      : WORDS[lang].yourExpenses;
 
   const all=Object.entries(cats);
   const shown=expanded?all:all.slice(0,3);
@@ -295,11 +321,8 @@ function renderMonth(){
     const d=new Date(e.date);
     if(d.getFullYear()==y&&d.getMonth()==m){
       if(e.type==="income") inc+=e.amount;
-      if(e.type==="expenses"){
-        out+=e.amount;
-        if(filter==="expenses") cats[e.category]=(cats[e.category]||0)+e.amount;
-      }
-      if(filter==="income" && e.type==="income"){
+      if(e.type==="expenses") out+=e.amount;
+      if(filter===e.type){
         cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
@@ -358,4 +381,4 @@ setHomeFilter("expenses");
 </script>
 
 </body>
-      </html>
+  </html>

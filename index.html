@@ -7,159 +7,38 @@
 
 <style>
 :root {
-  --bg: #faf9f5;
-  --card: #ffffff;
-  --green: #1f7f57;
-  --green-soft: #e8f3ee;
-  --red: #c84c4c;
-  --text: #111;
-  --muted: #777;
-  --radius: 18px;
+  --bg:#faf9f5; --card:#fff; --green:#1f7f57; --green-soft:#e8f3ee;
+  --red:#c84c4c; --text:#111; --muted:#777; --radius:18px;
 }
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-.hidden { display: none; }
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-}
-
-.logo {
-  font-size: 36px;
-  font-weight: 800;
-}
-
-.logo span {
-  color: var(--green);
-}
-
-button {
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.year-btn {
-  background: #eee;
-  padding: 10px 16px;
-  border-radius: 999px;
-}
-
-main {
-  padding: 0 16px 40px;
-}
-
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 16px;
-}
-
-.balance {
-  font-size: 42px;
-  font-weight: 800;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-}
-
-.tap {
-  cursor: pointer;
-}
-
-.in { color: var(--green); }
-.out { color: var(--red); }
-
-.section-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.more-btn {
-  margin-top: 12px;
-  background: var(--green-soft);
-  color: var(--green);
-  padding: 10px 16px;
-  border-radius: 999px;
-}
-
-.add-btn {
-  width: 100%;
-  background: var(--green);
-  color: #fff;
-  padding: 18px;
-  font-size: 18px;
-  font-weight: 600;
-  border-radius: 999px;
-  margin-top: 16px;
-}
-
-input {
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-}
-
-.type-toggle {
-  display: flex;
-  margin-bottom: 12px;
-}
-
-.type-toggle button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 12px;
-  background: #eee;
-}
-
-.type-toggle .active {
-  background: var(--green);
-  color: #fff;
-}
-
-.back-btn {
-  background: var(--green-soft);
-  color: var(--green);
-  padding: 12px 16px;
-  border-radius: 999px;
-  margin-top: 16px;
-}
-
-.small {
-  color: var(--muted);
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
+.hidden{display:none}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px}
+.logo{font-size:36px;font-weight:800}
+.logo span{color:var(--green)}
+button{border:none;cursor:pointer;font-size:16px}
+.year-btn{background:#eee;padding:10px 16px;border-radius:999px}
+main{padding:0 16px 40px}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.balance{font-size:42px;font-weight:800}
+.row{display:flex;justify-content:space-between;margin-top:12px}
+.tap{cursor:pointer}
+.in{color:var(--green)} .out{color:var(--red)}
+.section-title{font-size:22px;font-weight:700;margin-bottom:12px}
+ul{list-style:none;padding:0;margin:0}
+li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee}
+.more-btn{margin-top:12px;background:var(--green-soft);color:var(--green);
+padding:10px 16px;border-radius:999px}
+.add-btn{width:100%;background:var(--green);color:#fff;padding:18px;
+font-size:18px;font-weight:600;border-radius:999px;margin-top:16px}
+input{width:100%;padding:14px;font-size:16px;margin-bottom:12px;
+border-radius:12px;border:1px solid #ddd}
+.type-toggle{display:flex;margin-bottom:12px}
+.type-toggle button{flex:1;padding:12px;border-radius:12px;background:#eee}
+.type-toggle .active{background:var(--green);color:#fff}
+.back-btn{background:var(--green-soft);color:var(--green);
+padding:12px 16px;border-radius:999px;margin-top:16px}
+.small{color:var(--muted)}
 </style>
 </head>
 
@@ -172,12 +51,10 @@ input {
 
 <main>
 
-<!-- HOME -->
-<section id="home" class="screen">
+<section id="home">
   <div class="card">
     <div class="small">This Month</div>
     <div class="balance" id="homeBalance">0</div>
-
     <div class="row">
       <div class="tap in" id="tapIn">Money In <strong id="homeIn">0</strong></div>
       <div class="tap out" id="tapOut">Money Out <strong id="homeOut">0</strong></div>
@@ -193,8 +70,7 @@ input {
   <button class="add-btn" id="goAdd">+ Add Entry</button>
 </section>
 
-<!-- YEAR -->
-<section id="year" class="screen hidden">
+<section id="year" class="hidden">
   <div class="card">
     <div class="section-title">This Year</div>
     <ul id="yearList"></ul>
@@ -202,24 +78,20 @@ input {
   </div>
 </section>
 
-<!-- MONTH -->
-<section id="month" class="screen hidden">
+<section id="month" class="hidden">
   <div class="card">
     <div class="section-title" id="monthTitle"></div>
     <div class="balance" id="monthBalance">0</div>
-
     <div class="row">
       <div class="in">Money In <strong id="monthIn">0</strong></div>
       <div class="out">Money Out <strong id="monthOut">0</strong></div>
     </div>
-
     <ul id="monthCats"></ul>
     <button class="back-btn" id="backFromMonth">Back</button>
   </div>
 </section>
 
-<!-- LIST -->
-<section id="list" class="screen hidden">
+<section id="list" class="hidden">
   <div class="card">
     <div class="section-title" id="listTitle"></div>
     <ul id="listItems"></ul>
@@ -227,20 +99,16 @@ input {
   </div>
 </section>
 
-<!-- ADD -->
-<section id="add" class="screen hidden">
+<section id="add" class="hidden">
   <div class="card">
     <div class="section-title">Add Entry</div>
-
     <div class="type-toggle">
       <button id="typeIn" class="active">In</button>
       <button id="typeOut">Out</button>
     </div>
-
-    <input id="amount" placeholder="Amount" type="number" />
-    <input id="category" placeholder="Category" />
-    <input id="note" placeholder="Note (optional)" />
-
+    <input id="amount" placeholder="Amount" type="number">
+    <input id="category" placeholder="Category">
+    <input id="note" placeholder="Note (optional)">
     <button class="add-btn" id="save">Save</button>
     <button class="back-btn" id="cancel">Cancel</button>
   </div>
@@ -249,152 +117,99 @@ input {
 </main>
 
 <script>
-let entries = JSON.parse(localStorage.getItem("senti") || "[]");
-let entryType = "in";
-let expanded = false;
-let currentMonthKey = null;
-let lastScreen = "home";
+let entries = JSON.parse(localStorage.getItem("senti")||"[]");
+let entryType="in", expanded=false;
+const fmt=n=>n.toLocaleString();
+const show=id=>["home","year","month","list","add"]
+.forEach(s=>document.getElementById(s).classList.toggle("hidden",s!==id));
+const monthKey=d=>d.getFullYear()+"-"+d.getMonth();
+const monthLabel=k=>new Date(...k.split("-")).toLocaleString("default",{month:"long",year:"numeric"}).replace(" "," · ");
 
-const fmt = n => n.toLocaleString();
-
-function show(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-  lastScreen = id;
-}
-
-function monthKey(d) {
-  return d.getFullYear() + "-" + d.getMonth();
-}
-
-function monthLabel(key) {
-  const [y, m] = key.split("-");
-  return new Date(y, m).toLocaleString("default", { month: "long", year: "numeric" }).replace(" ", " · ");
-}
-
-function renderHome() {
-  const now = new Date();
-  let inc = 0, out = 0, cats = {};
-
-  entries.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-      if (e.type === "in") inc += e.amount;
-      else {
-        out += e.amount;
-        cats[e.category] = (cats[e.category] || 0) + e.amount;
-      }
+function renderHome(){
+ const now=new Date(); let inc=0,out=0,cats={};
+ entries.forEach(e=>{
+  const d=new Date(e.date);
+  if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
+    if(e.type==="in") inc+=e.amount;
+    else{
+      out+=e.amount;
+      cats[e.category]=(cats[e.category]||0)+e.amount;
     }
-  });
-
-  homeBalance.textContent = fmt(inc - out);
-  homeIn.textContent = fmt(inc);
-  homeOut.textContent = fmt(out);
-
-  homeCats.innerHTML = "";
-  const all = Object.entries(cats);
-  const visible = expanded ? all : all.slice(0,3);
-
-  visible.forEach(([c,v]) => {
-    homeCats.innerHTML += `<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
-  });
-
-  toggleCats.classList.toggle("hidden", all.length <= 3);
-  toggleCats.textContent = expanded ? "Show less" : "View all categories";
+  }
+ });
+ homeBalance.textContent=fmt(inc-out);
+ homeIn.textContent=fmt(inc);
+ homeOut.textContent=fmt(out);
+ homeCats.innerHTML="";
+ const all=Object.entries(cats);
+ (expanded?all:all.slice(0,3))
+ .forEach(([c,v])=>homeCats.innerHTML+=`<li><span>${c}</span><strong>${fmt(v)}</strong></li>`);
+ toggleCats.classList.toggle("hidden",all.length<=3);
+ toggleCats.textContent=expanded?"Show less":"View all categories";
 }
 
-function renderYear() {
-  yearList.innerHTML = "";
-  const map = {};
-
-  entries.forEach(e => {
-    const key = monthKey(new Date(e.date));
-    map[key] = map[key] || { in:0, out:0 };
-    map[key][e.type] += e.amount;
-  });
-
-  Object.keys(map).sort().reverse().forEach(k => {
-    const bal = map[k].in - map[k].out;
-    yearList.innerHTML += `<li class="tap" onclick="openMonth('${k}')"><span>${monthLabel(k)}</span><strong>${fmt(bal)}</strong></li>`;
-  });
+function renderYear(){
+ yearList.innerHTML="";
+ const map={};
+ entries.forEach(e=>{
+  const k=monthKey(new Date(e.date));
+  map[k]=map[k]||{in:0,out:0};
+  map[k][e.type]+=e.amount;
+ });
+ Object.keys(map).sort().reverse().forEach(k=>{
+  yearList.innerHTML+=`<li class="tap" onclick="openMonth('${k}')">
+  <span>${monthLabel(k)}</span><strong>${fmt(map[k].in-map[k].out)}</strong></li>`;
+ });
 }
 
-function openMonth(key) {
-  currentMonthKey = key;
-  show("month");
-
-  let inc=0,out=0,cats={};
-
-  entries.forEach(e => {
-    if (monthKey(new Date(e.date)) === key) {
-      if (e.type==="in") inc+=e.amount;
-      else {
-        out+=e.amount;
-        cats[e.category]=(cats[e.category]||0)+e.amount;
-      }
+function openMonth(k){
+ show("month");
+ let inc=0,out=0,cats={};
+ entries.forEach(e=>{
+  if(monthKey(new Date(e.date))===k){
+    if(e.type==="in") inc+=e.amount;
+    else{
+      out+=e.amount;
+      cats[e.category]=(cats[e.category]||0)+e.amount;
     }
-  });
-
-  monthTitle.textContent = monthLabel(key);
-  monthBalance.textContent = fmt(inc-out);
-  monthIn.textContent = fmt(inc);
-  monthOut.textContent = fmt(out);
-
-  monthCats.innerHTML="";
-  Object.entries(cats).forEach(([c,v])=>{
-    monthCats.innerHTML+=`<li><span>${c}</span><strong>${fmt(v)}</strong></li>`;
-  });
+  }
+ });
+ monthTitle.textContent=monthLabel(k);
+ monthBalance.textContent=fmt(inc-out);
+ monthIn.textContent=fmt(inc);
+ monthOut.textContent=fmt(out);
+ monthCats.innerHTML="";
+ Object.entries(cats)
+ .forEach(([c,v])=>monthCats.innerHTML+=`<li><span>${c}</span><strong>${fmt(v)}</strong></li>`);
 }
 
-function openList(type) {
-  show("list");
-  listTitle.textContent = type==="in" ? "Money In" : "Money Out";
-  listItems.innerHTML = "";
-
-  entries.forEach(e=>{
-    if(e.type===type){
-      listItems.innerHTML+=`<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`;
-    }
-  });
+function openList(t){
+ show("list");
+ listTitle.textContent=t==="in"?"Money In":"Money Out";
+ listItems.innerHTML="";
+ entries.filter(e=>e.type===t)
+ .forEach(e=>listItems.innerHTML+=`<li><span>${e.category}</span><strong>${fmt(e.amount)}</strong></li>`);
 }
 
-/* EVENTS */
-goYear.onclick = ()=>{ show("year"); renderYear(); };
-backFromYear.onclick = ()=>show("home");
-backFromMonth.onclick = ()=>show("year");
-backFromList.onclick = ()=>show("home");
-
-tapIn.onclick = ()=>openList("in");
-tapOut.onclick = ()=>openList("out");
-
-toggleCats.onclick = ()=>{ expanded=!expanded; renderHome(); };
-
-goAdd.onclick = ()=>show("add");
-cancel.onclick = ()=>show("home");
-
-typeIn.onclick = ()=>{ entryType="in"; typeIn.classList.add("active"); typeOut.classList.remove("active"); };
-typeOut.onclick = ()=>{ entryType="out"; typeOut.classList.add("active"); typeIn.classList.remove("active"); };
-
-save.onclick = ()=>{
-  const amt = Number(amount.value);
-  if(!amt) return;
-
-  entries.push({
-    type: entryType,
-    amount: amt,
-    category: category.value || "Other",
-    note: note.value || "",
-    date: new Date().toISOString()
-  });
-
-  localStorage.setItem("senti", JSON.stringify(entries));
-  amount.value = category.value = note.value = "";
-  show("home");
-  renderHome();
+goYear.onclick=()=>{show("year");renderYear()};
+backFromYear.onclick=()=>show("home");
+backFromMonth.onclick=()=>show("year");
+backFromList.onclick=()=>show("home");
+tapIn.onclick=()=>openList("in");
+tapOut.onclick=()=>openList("out");
+toggleCats.onclick=()=>{expanded=!expanded;renderHome()};
+goAdd.onclick=()=>show("add");
+cancel.onclick=()=>show("home");
+typeIn.onclick=()=>{entryType="in";typeIn.classList.add("active");typeOut.classList.remove("active")};
+typeOut.onclick=()=>{entryType="out";typeOut.classList.add("active");typeIn.classList.remove("active")};
+save.onclick=()=>{
+ const amt=Number(amount.value); if(!amt)return;
+ entries.push({type:entryType,amount:amt,category:category.value||"Other",note:note.value||"",date:new Date().toISOString()});
+ localStorage.setItem("senti",JSON.stringify(entries));
+ amount.value=category.value=note.value="";
+ show("home");renderHome();
 };
-
 renderHome();
 </script>
-
 </body>
   </html>

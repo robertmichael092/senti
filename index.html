@@ -55,8 +55,9 @@ main{padding:0 16px 32px}
 .label{font-size:14px;color:var(--muted);font-weight:600}
 .section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
-  list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;cursor:pointer
+  list-style:none;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
 }
 .list li:last-child{border-bottom:none}
 .soft-btn{
@@ -81,30 +82,18 @@ input{
   width:100%;padding:14px;margin-bottom:12px;border-radius:10px;
   border:1px solid var(--border);font-size:16px
 }
-.small{
-  font-size:13px;color:var(--muted)
-}
-.inline-confirm{
-  margin-top:8px;
-  padding:12px;
-  background:#f9f9f9;
-  border-radius:12px;
-}
-.inline-actions{
-  display:flex;
-  gap:12px;
-  margin-top:8px;
-}
-.inline-actions button{
-  flex:1;
-  padding:10px;
-  border:none;
-  border-radius:999px;
+.small{font-size:13px;color:var(--muted)}
+.delete-btn{
+  color:var(--red);
+  font-size:13px;
   font-weight:700;
   cursor:pointer;
 }
-.inline-cancel{background:#eee}
-.inline-delete{background:var(--red);color:#fff}
+.entry-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
 </style>
 </head>
 
@@ -202,12 +191,12 @@ const WORDS={
       yourIncome:"Your income",yourExpenses:"Your expenses",
       viewAll:"View all categories",showLess:"Show less",
       add:"Add",back:"Back",amount:"Amount",category:"Category",
-      note:"Note (optional)",other:"Other"},
+      note:"Note (optional)",other:"Other",entries:"Entries"},
   SW:{thisMonth:"Mwezi huu",thisYear:"Mwaka huu",income:"Mapato",expenses:"Matumizi",
       yourIncome:"Mapato yako",yourExpenses:"Matumizi yako",
       viewAll:"Tazama aina zote",showLess:"Onyesha chache",
       add:"Ongeza",back:"Rudi",amount:"Kiasi",category:"Aina",
-      note:"Maelezo (hiari)",other:"Nyingine"}
+      note:"Maelezo (hiari)",other:"Nyingine",entries:"Miamala"}
 };
 
 const MONTHS={
@@ -226,7 +215,7 @@ const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString();
 
 function show(id){
-  ["home","year","month","add","entries"].forEach(s=>$(s).classList.add("hidden"));
+  ["home","year","month","entries","add"].forEach(s=>$(s).classList.add("hidden"));
   $(id).classList.remove("hidden");
 }
 
@@ -289,7 +278,7 @@ function renderYear(){
   const map={};
   entries.forEach(e=>{
     const d=new Date(e.date);
-    const k=\`\${d.getFullYear()}-\${d.getMonth()}\`;
+    const k=`${d.getFullYear()}-${d.getMonth()}`;
     map[k]=map[k]||{income:0,expenses:0};
     map[k][e.type]+=e.amount;
   });
@@ -297,7 +286,7 @@ function renderYear(){
   Object.keys(map).sort().reverse().forEach(k=>{
     const [y,m]=k.split("-");
     const li=document.createElement("li");
-    li.innerHTML=\`<span>\${MONTHS[lang][m]} \${y}</span><strong>\${fmt(map[k].income-map[k].expenses)}</strong>\`;
+    li.innerHTML=`<span>${MONTHS[lang][m]} ${y}</span><strong>${fmt(map[k].income-map[k].expenses)}</strong>`;
     li.onclick=()=>openMonth(k);
     $("yearList").appendChild(li);
   });
@@ -320,12 +309,10 @@ function renderMonth(){
     if(d.getFullYear()==y&&d.getMonth()==m){
       if(e.type==="income") inc+=e.amount;
       if(e.type==="expenses") out+=e.amount;
-      if(filter===e.type){
-        cats[e.category]=(cats[e.category]||0)+e.amount;
-      }
+      if(filter===e.type) cats[e.category]=(cats[e.category]||0)+e.amount;
     }
   });
-  $("monthTitle").textContent=\`\${MONTHS[lang][m]} \${y}\`;
+  $("monthTitle").textContent=`${MONTHS[lang][m]} ${y}`;
   $("monthBalance").textContent=fmt(inc-out);
   $("monthIncome").textContent=fmt(inc);
   $("monthExpenses").textContent=fmt(out);
@@ -333,7 +320,7 @@ function renderMonth(){
   $("monthCats").innerHTML="";
   Object.entries(cats).forEach(([cat,val])=>{
     const li=document.createElement("li");
-    li.innerHTML=\`<span>\${cat}</span><strong>\${fmt(val)}</strong>\`;
+    li.innerHTML=`<span>${cat}</span><strong>${fmt(val)}</strong>`;
     li.onclick=()=>{
       currentCategory=cat;
       renderEntries();
@@ -347,56 +334,28 @@ function renderEntries(){
   $("entriesTitle").textContent=currentCategory;
   $("entryList").innerHTML="";
 
-  entries.forEach(e=>e._confirming=false);
-
   entries.filter(e=>{
     const d=new Date(e.date);
     const [y,m]=currentMonthKey.split("-");
     return d.getFullYear()==y && d.getMonth()==m && e.category===currentCategory && e.type===filter;
   }).forEach(e=>{
     const li=document.createElement("li");
-
-    if(!e._confirming){
-      li.innerHTML=\`
-        <span>
-          \${fmt(e.amount)}
-          <div class="small">\${new Date(e.date).toLocaleDateString()}</div>
-        </span>
-        <span class="small">\${e.note||""}</span>
-      \`;
-      li.onclick=()=>{
-        entries.forEach(x=>x._confirming=false);
-        e._confirming=true;
-        renderEntries();
-      };
-    } else {
-      li.innerHTML=\`
-        <div style="width:100%">
-          <strong>Delete this entry?</strong>
-          <div class="inline-confirm">
-            <div class="inline-actions">
-              <button class="inline-cancel">Cancel</button>
-              <button class="inline-delete">Delete</button>
-            </div>
-          </div>
+    li.innerHTML=`
+      <div class="entry-row">
+        <div>
+          <strong>${fmt(e.amount)}</strong>
+          <div class="small">${new Date(e.date).toLocaleDateString()}</div>
         </div>
-      \`;
-
-      li.querySelector(".inline-cancel").onclick=(ev)=>{
-        ev.stopPropagation();
-        e._confirming=false;
-        renderEntries();
-      };
-
-      li.querySelector(".inline-delete").onclick=(ev)=>{
-        ev.stopPropagation();
-        entries=entries.filter(x=>x!==e);
-        localStorage.setItem("senti",JSON.stringify(entries));
-        renderEntries();
-        renderMonth();
-      };
-    }
-
+        <div class="delete-btn">Delete</div>
+      </div>
+    `;
+    li.querySelector(".delete-btn").onclick=()=>{
+      entries=entries.filter(x=>x!==e);
+      localStorage.setItem("senti",JSON.stringify(entries));
+      renderEntries();
+      renderMonth();
+      renderHome();
+    };
     $("entryList").appendChild(li);
   });
 }
@@ -459,4 +418,4 @@ setHomeFilter("expenses");
 </script>
 
 </body>
-    </html>
+  </html>

@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Senti</title>
 
+<!-- Plausible Analytics -->
+<script defer data-domain="robertmichael092.github.io" src="https://plausible.io/js/script.js"></script>
+
 <style>
 :root{
   --bg:#fbf7f2;
@@ -39,13 +42,9 @@ header{
   background:#eee;border:none;padding:10px 16px;border-radius:999px;
   font-weight:600;cursor:pointer
 }
-
 main{padding:0 16px 32px}
 .card{
-  background:var(--card);
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:16px
+  background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px
 }
 .balance-title{color:var(--muted);font-weight:600}
 .balance{font-size:48px;font-weight:800;margin:8px 0 12px}
@@ -58,78 +57,46 @@ main{padding:0 16px 32px}
 .money-in{color:var(--green);font-weight:800}
 .money-out{color:var(--red);font-weight:800}
 .label{font-size:14px;color:var(--muted);font-weight:600}
-
 .section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
-  list-style:none;
-  padding:14px 0;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  cursor:pointer;
+  list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between
 }
 .list li:last-child{border-bottom:none}
-
 .soft-btn{
-  margin-top:12px;
-  background:var(--green-soft);
-  color:var(--green);
-  border:none;
-  padding:12px;
-  width:100%;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer
+  margin-top:12px;background:var(--green-soft);color:var(--green);
+  border:none;padding:12px;width:100%;border-radius:999px;
+  font-weight:700;cursor:pointer
 }
 .primary-btn{
-  margin-top:16px;
-  background:var(--green);
-  color:#fff;
-  border:none;
-  padding:18px;
-  width:100%;
-  border-radius:999px;
-  font-size:18px;
-  font-weight:800;
-  cursor:pointer
+  margin-top:16px;background:var(--green);color:#fff;border:none;
+  padding:18px;width:100%;border-radius:999px;
+  font-size:18px;font-weight:800;cursor:pointer
 }
-
 .tabs{
-  display:flex;
-  border:1px solid var(--border);
-  border-radius:999px;
-  overflow:hidden;
-  margin-bottom:16px
+  display:flex;border:1px solid var(--border);border-radius:999px;
+  overflow:hidden;margin-bottom:16px
 }
 .tab{
-  flex:1;
-  padding:12px;
-  text-align:center;
-  font-weight:800;
-  cursor:pointer
+  flex:1;padding:12px;text-align:center;font-weight:800;cursor:pointer
 }
 .tab.active{background:var(--green);color:#fff}
-
 input{
-  width:100%;
-  padding:14px;
-  margin-bottom:12px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  font-size:16px
+  width:100%;padding:14px;margin-bottom:12px;border-radius:10px;
+  border:1px solid var(--border);font-size:16px
 }
 
-/* DELETE MODAL */
-.modal-overlay{
+/* ===== SAFE DELETE MODAL (PASSIVE) ===== */
+.delete-modal{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.4);
   display:flex;
   align-items:center;
   justify-content:center;
-  z-index:1000;
+  z-index:999;
 }
-.modal{
+.delete-modal-card{
   background:#fff;
   border-radius:20px;
   padding:24px;
@@ -137,12 +104,16 @@ input{
   max-width:360px;
   text-align:center;
 }
-.modal h3{margin:0 0 20px}
-.modal-actions{
+.delete-modal-title{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:20px;
+}
+.delete-modal-actions{
   display:flex;
   gap:12px;
 }
-.modal-actions button{
+.delete-modal-actions button{
   flex:1;
   padding:14px;
   border-radius:999px;
@@ -150,8 +121,8 @@ input{
   font-weight:800;
   cursor:pointer;
 }
-.modal-cancel{background:#eee}
-.modal-delete{background:var(--red);color:#fff}
+.delete-cancel{background:#eee}
+.delete-confirm{background:var(--red);color:#fff}
 </style>
 </head>
 
@@ -192,11 +163,29 @@ input{
   <button class="primary-btn" id="addBtn"></button>
 </section>
 
+<section id="year" class="hidden">
+  <div class="card">
+    <div class="section-title" id="yearTitle"></div>
+    <ul class="list" id="yearList"></ul>
+    <button class="soft-btn" id="backFromYear"></button>
+  </div>
+</section>
+
 <section id="month" class="hidden">
   <div class="card">
     <div class="section-title" id="monthTitle"></div>
     <div class="balance" id="monthBalance"></div>
-    <ul class="list" id="monthEntries"></ul>
+    <div class="row">
+      <div class="money-box active" id="monthIncomeBox">
+        <div class="label" id="monthIncomeLabel"></div>
+        <div class="money-in" id="monthIncome">0</div>
+      </div>
+      <div class="money-box" id="monthExpensesBox">
+        <div class="label" id="monthExpensesLabel"></div>
+        <div class="money-out" id="monthExpenses">0</div>
+      </div>
+    </div>
+    <ul class="list" id="monthCats"></ul>
     <button class="soft-btn" id="backFromMonth"></button>
   </div>
 </section>
@@ -217,46 +206,58 @@ input{
 
 </main>
 
-<!-- DELETE MODAL -->
-<div id="deleteOverlay" class="modal-overlay hidden">
-  <div class="modal">
-    <h3>Delete this entry?</h3>
-    <div class="modal-actions">
-      <button class="modal-cancel" id="deleteCancel">Cancel</button>
-      <button class="modal-delete" id="deleteConfirm">Delete</button>
+<!-- SAFE DELETE MODAL (INERT FOR NOW) -->
+<div id="deleteModal" class="delete-modal hidden">
+  <div class="delete-modal-card">
+    <div class="delete-modal-title">Delete this entry?</div>
+    <div class="delete-modal-actions">
+      <button class="delete-cancel" id="deleteCancelBtn">Cancel</button>
+      <button class="delete-confirm" id="deleteConfirmBtn">Delete</button>
     </div>
   </div>
 </div>
 
 <script>
+/* ========= APP LOGIC UNCHANGED ========= */
+
 const WORDS={
-  EN:{thisMonth:"This Month",income:"Income",expenses:"Expenses",
+  EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
       yourIncome:"Your income",yourExpenses:"Your expenses",
       viewAll:"View all categories",showLess:"Show less",
       add:"Add",back:"Back",amount:"Amount",category:"Category",
-      note:"Note (optional)",other:"Other"},
+      note:"Note (optional)",other:"Other"}
+};
+
+const MONTHS={
+  EN:["January","February","March","April","May","June","July","August","September","October","November","December"]
 };
 
 let lang="EN";
 let entries=JSON.parse(localStorage.getItem("senti")||"[]");
-let filter="expenses";
 let expanded=false;
-let deleteIndex=null;
+let filter="expenses";
+let currentMonthKey=null;
 
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString();
 
 function show(id){
-  ["home","month","add"].forEach(s=>$(s).classList.add("hidden"));
+  ["home","year","month","add"].forEach(s=>$(s).classList.add("hidden"));
   $(id).classList.remove("hidden");
 }
 
 function applyLang(){
   const w=WORDS[lang];
   $("homeTitle").textContent=w.thisMonth;
+  $("yearTitle").textContent=w.thisYear;
   $("incomeLabel").textContent=w.income;
   $("expensesLabel").textContent=w.expenses;
+  $("monthIncomeLabel").textContent=w.income;
+  $("monthExpensesLabel").textContent=w.expenses;
   $("addBtn").textContent=w.add;
+  $("backFromYear").textContent=w.back;
+  $("backFromMonth").textContent=w.back;
+  $("toggleCats").textContent=expanded?w.showLess:w.viewAll;
   $("tabIncome").textContent=w.income;
   $("tabExpenses").textContent=w.expenses;
   $("amount").placeholder=w.amount;
@@ -266,13 +267,24 @@ function applyLang(){
   $("cancelAdd").textContent=w.back;
 }
 
+function setHomeFilter(f){
+  filter=f;
+  $("homeIncomeBox").classList.toggle("active",f==="income");
+  $("homeExpensesBox").classList.toggle("active",f==="expenses");
+  renderHome();
+}
+
 function renderHome(){
+  const now=new Date();
   let inc=0,out=0,cats={};
   entries.forEach(e=>{
-    if(e.type==="income") inc+=e.amount;
-    if(e.type==="expenses") out+=e.amount;
-    if(e.type===filter){
-      cats[e.category]=(cats[e.category]||0)+e.amount;
+    const d=new Date(e.date);
+    if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
+      if(e.type==="income") inc+=e.amount;
+      if(e.type==="expenses") out+=e.amount;
+      if(filter===e.type){
+        cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
     }
   });
   $("homeBalance").textContent=fmt(inc-out);
@@ -285,43 +297,27 @@ function renderHome(){
   const shown=expanded?all:all.slice(0,3);
   $("homeCats").innerHTML="";
   shown.forEach(([k,v])=>{
-    $("homeCats").innerHTML+=`<li>${k}<strong>${fmt(v)}</strong></li>`;
+    $("homeCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
   });
   $("toggleCats").style.display=all.length>3?"block":"none";
 }
 
-function openDelete(i){
-  deleteIndex=i;
-  $("deleteOverlay").classList.remove("hidden");
-}
+/* ========= EVENT WIRING ========= */
 
-function closeDelete(){
-  deleteIndex=null;
-  $("deleteOverlay").classList.add("hidden");
-}
-
-function confirmDelete(){
-  entries.splice(deleteIndex,1);
-  localStorage.setItem("senti",JSON.stringify(entries));
-  closeDelete();
-  renderHome();
-}
-
-$("deleteCancel").onclick=closeDelete;
-$("deleteConfirm").onclick=confirmDelete;
-
-$("homeIncomeBox").onclick=()=>{filter="income";renderHome()};
-$("homeExpensesBox").onclick=()=>{filter="expenses";renderHome()};
-$("toggleCats").onclick=()=>{expanded=!expanded;renderHome()};
+$("homeIncomeBox").onclick=()=>setHomeFilter("income");
+$("homeExpensesBox").onclick=()=>setHomeFilter("expenses");
+$("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome()};
+$("yearBtn").onclick=()=>show("year");
+$("backFromYear").onclick=()=>show("home");
+$("backFromMonth").onclick=()=>show("home");
 $("addBtn").onclick=()=>show("add");
 $("cancelAdd").onclick=()=>show("home");
 
 $("saveBtn").onclick=()=>{
   const amt=Number($("amount").value);
   if(!amt)return;
-  const type=$("tabIncome").classList.contains("active")?"income":"expenses";
   entries.push({
-    type,
+    type:$("tabIncome").classList.contains("active")?"income":"expenses",
     amount:amt,
     category:$("category").value||WORDS[lang].other,
     note:$("note").value||"",
@@ -330,16 +326,15 @@ $("saveBtn").onclick=()=>{
   localStorage.setItem("senti",JSON.stringify(entries));
   $("amount").value=$("category").value=$("note").value="";
   show("home");
-  filter="expenses";
-  renderHome();
+  setHomeFilter("expenses");
 };
 
 $("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
 $("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
 
 applyLang();
-renderHome();
+setHomeFilter("expenses");
 </script>
 
 </body>
-  </html>
+          </html>

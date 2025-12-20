@@ -60,6 +60,14 @@ main{padding:0 16px 32px}
   border-bottom:1px solid var(--border);
 }
 .list li:last-child{border-bottom:none}
+
+.cat-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+}
+
 .soft-btn{
   margin-top:12px;background:var(--green-soft);color:var(--green);
   border:none;padding:12px;width:100%;border-radius:999px;
@@ -269,7 +277,13 @@ function renderHome(){
   const shown=expanded?all:all.slice(0,3);
   $("homeCats").innerHTML="";
   shown.forEach(([k,v])=>{
-    $("homeCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
+    $("homeCats").innerHTML+=`
+      <li>
+        <div class="cat-row">
+          <span>${k}</span>
+          <strong>${fmt(v)}</strong>
+        </div>
+      </li>`;
   });
   $("toggleCats").style.display=all.length>3?"block":"none";
 }
@@ -278,7 +292,7 @@ function renderYear(){
   const map={};
   entries.forEach(e=>{
     const d=new Date(e.date);
-    const k=`${d.getFullYear()}-${d.getMonth()}`;
+    const k=\`\${d.getFullYear()}-\${d.getMonth()}\`;
     map[k]=map[k]||{income:0,expenses:0};
     map[k][e.type]+=e.amount;
   });
@@ -286,7 +300,7 @@ function renderYear(){
   Object.keys(map).sort().reverse().forEach(k=>{
     const [y,m]=k.split("-");
     const li=document.createElement("li");
-    li.innerHTML=`<span>${MONTHS[lang][m]} ${y}</span><strong>${fmt(map[k].income-map[k].expenses)}</strong>`;
+    li.innerHTML=\`<span>\${MONTHS[lang][m]} \${y}</span><strong>\${fmt(map[k].income-map[k].expenses)}</strong>\`;
     li.onclick=()=>openMonth(k);
     $("yearList").appendChild(li);
   });
@@ -312,7 +326,7 @@ function renderMonth(){
       if(filter===e.type) cats[e.category]=(cats[e.category]||0)+e.amount;
     }
   });
-  $("monthTitle").textContent=`${MONTHS[lang][m]} ${y}`;
+  $("monthTitle").textContent=\`\${MONTHS[lang][m]} \${y}\`;
   $("monthBalance").textContent=fmt(inc-out);
   $("monthIncome").textContent=fmt(inc);
   $("monthExpenses").textContent=fmt(out);
@@ -320,7 +334,11 @@ function renderMonth(){
   $("monthCats").innerHTML="";
   Object.entries(cats).forEach(([cat,val])=>{
     const li=document.createElement("li");
-    li.innerHTML=`<span>${cat}</span><strong>${fmt(val)}</strong>`;
+    li.innerHTML=`
+      <div class="cat-row">
+        <span>${cat}</span>
+        <strong>${fmt(val)}</strong>
+      </div>`;
     li.onclick=()=>{
       currentCategory=cat;
       renderEntries();
@@ -347,8 +365,7 @@ function renderEntries(){
           <div class="small">${new Date(e.date).toLocaleDateString()}</div>
         </div>
         <div class="delete-btn">Delete</div>
-      </div>
-    `;
+      </div>`;
     li.querySelector(".delete-btn").onclick=()=>{
       entries=entries.filter(x=>x!==e);
       localStorage.setItem("senti",JSON.stringify(entries));

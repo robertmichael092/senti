@@ -24,6 +24,7 @@ body{
   color:var(--text);
 }
 .hidden{display:none}
+
 header{
   display:flex;
   justify-content:space-between;
@@ -38,9 +39,13 @@ header{
   background:#eee;border:none;padding:10px 16px;border-radius:999px;
   font-weight:600;cursor:pointer
 }
+
 main{padding:0 16px 32px}
 .card{
-  background:var(--card);border-radius:20px;padding:20px;margin-bottom:16px
+  background:var(--card);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:16px
 }
 .balance-title{color:var(--muted);font-weight:600}
 .balance{font-size:48px;font-weight:800;margin:8px 0 12px}
@@ -53,52 +58,97 @@ main{padding:0 16px 32px}
 .money-in{color:var(--green);font-weight:800}
 .money-out{color:var(--red);font-weight:800}
 .label{font-size:14px;color:var(--muted);font-weight:600}
+
 .section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
-  list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center
+  list-style:none;
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  cursor:pointer;
 }
 .list li:last-child{border-bottom:none}
+
 .soft-btn{
-  margin-top:12px;background:var(--green-soft);color:var(--green);
-  border:none;padding:12px;width:100%;border-radius:999px;
-  font-weight:700;cursor:pointer
+  margin-top:12px;
+  background:var(--green-soft);
+  color:var(--green);
+  border:none;
+  padding:12px;
+  width:100%;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer
 }
 .primary-btn{
-  margin-top:16px;background:var(--green);color:#fff;border:none;
-  padding:18px;width:100%;border-radius:999px;
-  font-size:18px;font-weight:800;cursor:pointer
-}
-.tabs{
-  display:flex;border:1px solid var(--border);border-radius:999px;
-  overflow:hidden;margin-bottom:16px
-}
-.tab{
-  flex:1;padding:12px;text-align:center;font-weight:800;cursor:pointer
-}
-.tab.active{background:var(--green);color:#fff}
-input{
-  width:100%;padding:14px;margin-bottom:12px;border-radius:10px;
-  border:1px solid var(--border);font-size:16px
+  margin-top:16px;
+  background:var(--green);
+  color:#fff;
+  border:none;
+  padding:18px;
+  width:100%;
+  border-radius:999px;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer
 }
 
-/* ---------- DELETE MODAL ---------- */
-.modal-backdrop{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);
-  display:flex;align-items:center;justify-content:center;
-  z-index:999;
+.tabs{
+  display:flex;
+  border:1px solid var(--border);
+  border-radius:999px;
+  overflow:hidden;
+  margin-bottom:16px
+}
+.tab{
+  flex:1;
+  padding:12px;
+  text-align:center;
+  font-weight:800;
+  cursor:pointer
+}
+.tab.active{background:var(--green);color:#fff}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  font-size:16px
+}
+
+/* DELETE MODAL */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
 }
 .modal{
-  background:#fff;border-radius:20px;padding:20px;
-  width:90%;max-width:320px;text-align:center
+  background:#fff;
+  border-radius:20px;
+  padding:24px;
+  width:90%;
+  max-width:360px;
+  text-align:center;
 }
-.modal h3{margin:0 0 12px}
+.modal h3{margin:0 0 20px}
 .modal-actions{
-  display:flex;gap:10px;margin-top:16px
+  display:flex;
+  gap:12px;
 }
 .modal-actions button{
-  flex:1;padding:12px;border-radius:999px;border:none;
-  font-weight:700;cursor:pointer
+  flex:1;
+  padding:14px;
+  border-radius:999px;
+  border:none;
+  font-weight:800;
+  cursor:pointer;
 }
 .modal-cancel{background:#eee}
 .modal-delete{background:var(--red);color:#fff}
@@ -142,29 +192,11 @@ input{
   <button class="primary-btn" id="addBtn"></button>
 </section>
 
-<section id="year" class="hidden">
-  <div class="card">
-    <div class="section-title" id="yearTitle"></div>
-    <ul class="list" id="yearList"></ul>
-    <button class="soft-btn" id="backFromYear"></button>
-  </div>
-</section>
-
 <section id="month" class="hidden">
   <div class="card">
     <div class="section-title" id="monthTitle"></div>
     <div class="balance" id="monthBalance"></div>
-    <div class="row">
-      <div class="money-box active" id="monthIncomeBox">
-        <div class="label" id="monthIncomeLabel"></div>
-        <div class="money-in" id="monthIncome">0</div>
-      </div>
-      <div class="money-box" id="monthExpensesBox">
-        <div class="label" id="monthExpensesLabel"></div>
-        <div class="money-out" id="monthExpenses">0</div>
-      </div>
-    </div>
-    <ul class="list" id="monthCats"></ul>
+    <ul class="list" id="monthEntries"></ul>
     <button class="soft-btn" id="backFromMonth"></button>
   </div>
 </section>
@@ -186,63 +218,45 @@ input{
 </main>
 
 <!-- DELETE MODAL -->
-<div class="modal-backdrop hidden" id="deleteModal">
+<div id="deleteOverlay" class="modal-overlay hidden">
   <div class="modal">
     <h3>Delete this entry?</h3>
     <div class="modal-actions">
-      <button class="modal-cancel" id="cancelDelete">Cancel</button>
-      <button class="modal-delete" id="confirmDelete">Delete</button>
+      <button class="modal-cancel" id="deleteCancel">Cancel</button>
+      <button class="modal-delete" id="deleteConfirm">Delete</button>
     </div>
   </div>
 </div>
 
 <script>
 const WORDS={
-  EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
+  EN:{thisMonth:"This Month",income:"Income",expenses:"Expenses",
       yourIncome:"Your income",yourExpenses:"Your expenses",
       viewAll:"View all categories",showLess:"Show less",
       add:"Add",back:"Back",amount:"Amount",category:"Category",
       note:"Note (optional)",other:"Other"},
-  SW:{thisMonth:"Mwezi huu",thisYear:"Mwaka huu",income:"Mapato",expenses:"Matumizi",
-      yourIncome:"Mapato yako",yourExpenses:"Matumizi yako",
-      viewAll:"Tazama aina zote",showLess:"Onyesha chache",
-      add:"Ongeza",back:"Rudi",amount:"Kiasi",category:"Aina",
-      note:"Maelezo (hiari)",other:"Nyingine"}
 };
 
-const MONTHS={
-  EN:["January","February","March","April","May","June","July","August","September","October","November","December"],
-  SW:["Januari","Februari","Machi","Aprili","Mei","Juni","Julai","Agosti","Septemba","Oktoba","Novemba","Desemba"]
-};
-
-let lang=localStorage.getItem("lang")||"EN";
+let lang="EN";
 let entries=JSON.parse(localStorage.getItem("senti")||"[]");
-let expanded=false;
 let filter="expenses";
-let currentMonthKey=null;
+let expanded=false;
 let deleteIndex=null;
 
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString();
 
 function show(id){
-  ["home","year","month","add"].forEach(s=>$(s).classList.add("hidden"));
+  ["home","month","add"].forEach(s=>$(s).classList.add("hidden"));
   $(id).classList.remove("hidden");
 }
 
 function applyLang(){
   const w=WORDS[lang];
-  $("langToggle").textContent=lang;
   $("homeTitle").textContent=w.thisMonth;
-  $("yearTitle").textContent=w.thisYear;
   $("incomeLabel").textContent=w.income;
   $("expensesLabel").textContent=w.expenses;
-  $("monthIncomeLabel").textContent=w.income;
-  $("monthExpensesLabel").textContent=w.expenses;
   $("addBtn").textContent=w.add;
-  $("backFromYear").textContent=w.back;
-  $("backFromMonth").textContent=w.back;
-  $("toggleCats").textContent=expanded?w.showLess:w.viewAll;
   $("tabIncome").textContent=w.income;
   $("tabExpenses").textContent=w.expenses;
   $("amount").placeholder=w.amount;
@@ -252,24 +266,13 @@ function applyLang(){
   $("cancelAdd").textContent=w.back;
 }
 
-function setHomeFilter(f){
-  filter=f;
-  $("homeIncomeBox").classList.toggle("active",f==="income");
-  $("homeExpensesBox").classList.toggle("active",f==="expenses");
-  renderHome();
-}
-
 function renderHome(){
-  const now=new Date();
   let inc=0,out=0,cats={};
   entries.forEach(e=>{
-    const d=new Date(e.date);
-    if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
-      if(e.type==="income") inc+=e.amount;
-      if(e.type==="expenses") out+=e.amount;
-      if(filter===e.type){
-        cats[e.category]=(cats[e.category]||0)+e.amount;
-      }
+    if(e.type==="income") inc+=e.amount;
+    if(e.type==="expenses") out+=e.amount;
+    if(e.type===filter){
+      cats[e.category]=(cats[e.category]||0)+e.amount;
     }
   });
   $("homeBalance").textContent=fmt(inc-out);
@@ -282,87 +285,34 @@ function renderHome(){
   const shown=expanded?all:all.slice(0,3);
   $("homeCats").innerHTML="";
   shown.forEach(([k,v])=>{
-    $("homeCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
+    $("homeCats").innerHTML+=`<li>${k}<strong>${fmt(v)}</strong></li>`;
   });
   $("toggleCats").style.display=all.length>3?"block":"none";
 }
 
-function renderYear(){
-  const map={};
-  entries.forEach(e=>{
-    const d=new Date(e.date);
-    const k=`${d.getFullYear()}-${d.getMonth()}`;
-    map[k]=map[k]||{income:0,expenses:0};
-    map[k][e.type]+=e.amount;
-  });
-  $("yearList").innerHTML="";
-  Object.keys(map).sort().reverse().forEach(k=>{
-    const [y,m]=k.split("-");
-    const li=document.createElement("li");
-    li.innerHTML=`<span>${MONTHS[lang][m]} ${y}</span><strong>${fmt(map[k].income-map[k].expenses)}</strong>`;
-    li.onclick=()=>openMonth(k);
-    $("yearList").appendChild(li);
-  });
+function openDelete(i){
+  deleteIndex=i;
+  $("deleteOverlay").classList.remove("hidden");
 }
 
-function openMonth(k){
-  currentMonthKey=k;
-  filter="expenses";
-  show("month");
-  renderMonth();
+function closeDelete(){
+  deleteIndex=null;
+  $("deleteOverlay").classList.add("hidden");
 }
 
-function renderMonth(){
-  const [y,m]=currentMonthKey.split("-");
-  let inc=0,out=0,cats={};
-  $("monthCats").innerHTML="";
-  entries.forEach((e,i)=>{
-    const d=new Date(e.date);
-    if(d.getFullYear()==y&&d.getMonth()==m){
-      if(e.type==="income") inc+=e.amount;
-      if(e.type==="expenses") out+=e.amount;
-      if(filter===e.type){
-        cats[e.category]=(cats[e.category]||0)+e.amount;
-        const li=document.createElement("li");
-        li.innerHTML=`<span>${e.category}</span><strong>${fmt(e.amount)}</strong>`;
-        li.onclick=()=>{
-          deleteIndex=i;
-          $("deleteModal").classList.remove("hidden");
-        };
-        $("monthCats").appendChild(li);
-      }
-    }
-  });
-  $("monthTitle").textContent=`${MONTHS[lang][m]} ${y}`;
-  $("monthBalance").textContent=fmt(inc-out);
-  $("monthIncome").textContent=fmt(inc);
-  $("monthExpenses").textContent=fmt(out);
-}
-
-$("confirmDelete").onclick=()=>{
+function confirmDelete(){
   entries.splice(deleteIndex,1);
   localStorage.setItem("senti",JSON.stringify(entries));
-  $("deleteModal").classList.add("hidden");
-  renderMonth(); // immediate refresh
-};
-
-$("cancelDelete").onclick=()=>{
-  $("deleteModal").classList.add("hidden");
-};
-
-$("langToggle").onclick=()=>{
-  lang=lang==="EN"?"SW":"EN";
-  localStorage.setItem("lang",lang);
-  applyLang();
+  closeDelete();
   renderHome();
-};
+}
 
-$("homeIncomeBox").onclick=()=>setHomeFilter("income");
-$("homeExpensesBox").onclick=()=>setHomeFilter("expenses");
-$("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome()};
-$("yearBtn").onclick=()=>{renderYear();show("year")};
-$("backFromYear").onclick=()=>show("home");
-$("backFromMonth").onclick=()=>show("home");
+$("deleteCancel").onclick=closeDelete;
+$("deleteConfirm").onclick=confirmDelete;
+
+$("homeIncomeBox").onclick=()=>{filter="income";renderHome()};
+$("homeExpensesBox").onclick=()=>{filter="expenses";renderHome()};
+$("toggleCats").onclick=()=>{expanded=!expanded;renderHome()};
 $("addBtn").onclick=()=>show("add");
 $("cancelAdd").onclick=()=>show("home");
 
@@ -380,14 +330,15 @@ $("saveBtn").onclick=()=>{
   localStorage.setItem("senti",JSON.stringify(entries));
   $("amount").value=$("category").value=$("note").value="";
   show("home");
-  setHomeFilter("expenses");
+  filter="expenses";
+  renderHome();
 };
 
 $("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
 $("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
 
 applyLang();
-setHomeFilter("expenses");
+renderHome();
 </script>
 
 </body>

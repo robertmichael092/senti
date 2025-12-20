@@ -84,6 +84,42 @@ input{
 .small{
   font-size:13px;color:var(--muted)
 }
+
+/* ===== CUSTOM DELETE MODAL (ADDITIVE) ===== */
+.delete-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.delete-modal{
+  background:#fff;
+  border-radius:20px;
+  padding:24px;
+  width:90%;
+  max-width:360px;
+  text-align:center;
+}
+.delete-modal h3{
+  margin:0 0 20px;
+}
+.delete-actions{
+  display:flex;
+  gap:12px;
+}
+.delete-actions button{
+  flex:1;
+  padding:14px;
+  border-radius:999px;
+  border:none;
+  font-weight:800;
+  cursor:pointer;
+}
+.delete-cancel{background:#eee}
+.delete-confirm{background:var(--red);color:#fff}
 </style>
 </head>
 
@@ -175,6 +211,17 @@ input{
 
 </main>
 
+<!-- ===== DELETE MODAL (ADDITIVE) ===== -->
+<div id="deleteOverlay" class="delete-overlay hidden">
+  <div class="delete-modal">
+    <h3>Delete this entry?</h3>
+    <div class="delete-actions">
+      <button class="delete-cancel" id="deleteCancelBtn">Cancel</button>
+      <button class="delete-confirm" id="deleteConfirmBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const WORDS={
   EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
@@ -200,6 +247,9 @@ let expanded=false;
 let filter="expenses";
 let currentMonthKey=null;
 let currentCategory=null;
+
+/* ===== DELETE STATE (ADDITIVE) ===== */
+let pendingDeleteEntry=null;
 
 const $=id=>document.getElementById(id);
 const fmt=n=>n.toLocaleString();
@@ -339,16 +389,29 @@ function renderEntries(){
       </span>
       <span class="small">${e.note||""}</span>
     `;
-    li.onclick=()=>{
-      if(confirm("Delete this entry?")){
-        entries=entries.filter(x=>x!==e);
-        localStorage.setItem("senti",JSON.stringify(entries));
-        renderMonth();
-      }
-    };
+    li.onclick=()=>openDeleteModal(e);
     $("entryList").appendChild(li);
   });
 }
+
+/* ===== DELETE MODAL LOGIC (ADDITIVE) ===== */
+function openDeleteModal(entry){
+  pendingDeleteEntry=entry;
+  $("deleteOverlay").classList.remove("hidden");
+}
+function closeDeleteModal(){
+  pendingDeleteEntry=null;
+  $("deleteOverlay").classList.add("hidden");
+}
+function confirmDelete(){
+  if(!pendingDeleteEntry)return;
+  entries=entries.filter(e=>e!==pendingDeleteEntry);
+  localStorage.setItem("senti",JSON.stringify(entries));
+  closeDeleteModal();
+  renderEntries();
+}
+$("deleteCancelBtn").onclick=closeDeleteModal;
+$("deleteConfirmBtn").onclick=confirmDelete;
 
 $("langToggle").onclick=()=>{
   lang=lang==="EN"?"SW":"EN";
@@ -366,7 +429,6 @@ $("monthIncomeBox").onclick=()=>{
   $("monthExpensesBox").classList.remove("active");
   renderMonth();
 };
-
 $("monthExpensesBox").onclick=()=>{
   filter="expenses";
   $("monthExpensesBox").classList.add("active");
@@ -409,4 +471,4 @@ setHomeFilter("expenses");
 </script>
 
 </body>
-                                               </html>
+    </html>

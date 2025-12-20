@@ -5,11 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Senti</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#fbf7f2">
-
-<script defer data-domain="robertmichael092.github.io" src="https://plausible.io/js/script.js"></script>
-
 <style>
 :root{
   --bg:#fbf7f2;
@@ -61,8 +56,7 @@ main{padding:0 16px 32px}
 .section-title{font-size:22px;font-weight:800;margin-bottom:8px}
 .list li{
   list-style:none;padding:12px 0;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;
-  cursor:pointer;
+  display:flex;justify-content:space-between
 }
 .list li:last-child{border-bottom:none}
 .soft-btn{
@@ -171,8 +165,6 @@ input{
 </main>
 
 <script>
-function track(e,p={}){ if(window.plausible) plausible(e,{props:p}); }
-
 const WORDS={
   EN:{thisMonth:"This Month",thisYear:"This Year",income:"Income",expenses:"Expenses",
       yourIncome:"Your income",yourExpenses:"Your expenses",
@@ -227,6 +219,13 @@ function applyLang(){
   $("cancelAdd").textContent=w.back;
 }
 
+function setHomeFilter(f){
+  filter=f;
+  $("homeIncomeBox").classList.toggle("active",f==="income");
+  $("homeExpensesBox").classList.toggle("active",f==="expenses");
+  renderHome();
+}
+
 function renderHome(){
   const now=new Date();
   let inc=0,out=0,cats={};
@@ -235,13 +234,16 @@ function renderHome(){
     if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()){
       if(e.type==="income") inc+=e.amount;
       if(e.type==="expenses") out+=e.amount;
-      if(filter===e.type) cats[e.category]=(cats[e.category]||0)+e.amount;
+      if(filter===e.type){
+        cats[e.category]=(cats[e.category]||0)+e.amount;
+      }
     }
   });
   $("homeBalance").textContent=fmt(inc-out);
   $("homeIncome").textContent=fmt(inc);
   $("homeExpenses").textContent=fmt(out);
-  $("whereTitle").textContent = filter==="income"?WORDS[lang].yourIncome:WORDS[lang].yourExpenses;
+  $("whereTitle").textContent =
+    filter==="income" ? WORDS[lang].yourIncome : WORDS[lang].yourExpenses;
 
   const all=Object.entries(cats);
   const shown=expanded?all:all.slice(0,3);
@@ -273,46 +275,34 @@ function renderYear(){
 function openMonth(k){
   currentMonthKey=k;
   filter="expenses";
+  $("monthIncomeBox").classList.remove("active");
+  $("monthExpensesBox").classList.add("active");
   show("month");
   renderMonth();
 }
 
-/* -------- DELETE IMPLEMENTATION (MONTH VIEW ONLY) -------- */
-
 function renderMonth(){
   const [y,m]=currentMonthKey.split("-");
-  let inc=0,out=0;
-  $("monthCats").innerHTML="";
-
+  let inc=0,out=0,cats={};
   entries.forEach(e=>{
     const d=new Date(e.date);
     if(d.getFullYear()==y&&d.getMonth()==m){
       if(e.type==="income") inc+=e.amount;
       if(e.type==="expenses") out+=e.amount;
-
       if(filter===e.type){
-        const li=document.createElement("li");
-        li.innerHTML=`<span>${e.category}</span><strong>${fmt(e.amount)}</strong>`;
-        li.onclick=()=>{
-          if(confirm("Delete this entry?")){
-            entries=entries.filter(x=>x!==e);
-            localStorage.setItem("senti",JSON.stringify(entries));
-            renderMonth();
-            renderHome();
-          }
-        };
-        $("monthCats").appendChild(li);
+        cats[e.category]=(cats[e.category]||0)+e.amount;
       }
     }
   });
-
   $("monthTitle").textContent=`${MONTHS[lang][m]} ${y}`;
   $("monthBalance").textContent=fmt(inc-out);
   $("monthIncome").textContent=fmt(inc);
   $("monthExpenses").textContent=fmt(out);
+  $("monthCats").innerHTML="";
+  Object.entries(cats).forEach(([k,v])=>{
+    $("monthCats").innerHTML+=`<li><span>${k}</span><strong>${fmt(v)}</strong></li>`;
+  });
 }
-
-/* -------------------------------------------------------- */
 
 $("langToggle").onclick=()=>{
   lang=lang==="EN"?"SW":"EN";
@@ -321,11 +311,25 @@ $("langToggle").onclick=()=>{
   renderHome();
 };
 
-$("homeIncomeBox").onclick=()=>{filter="income";renderHome();};
-$("homeExpensesBox").onclick=()=>{filter="expenses";renderHome();};
+$("homeIncomeBox").onclick=()=>setHomeFilter("income");
+$("homeExpensesBox").onclick=()=>setHomeFilter("expenses");
 
-$("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome();};
-$("yearBtn").onclick=()=>{renderYear();show("year");};
+$("monthIncomeBox").onclick=()=>{
+  filter="income";
+  $("monthIncomeBox").classList.add("active");
+  $("monthExpensesBox").classList.remove("active");
+  renderMonth();
+};
+
+$("monthExpensesBox").onclick=()=>{
+  filter="expenses";
+  $("monthExpensesBox").classList.add("active");
+  $("monthIncomeBox").classList.remove("active");
+  renderMonth();
+};
+
+$("toggleCats").onclick=()=>{expanded=!expanded;applyLang();renderHome()};
+$("yearBtn").onclick=()=>{renderYear();show("year")};
 $("backFromYear").onclick=()=>show("home");
 $("backFromMonth").onclick=()=>show("home");
 
@@ -335,9 +339,9 @@ $("cancelAdd").onclick=()=>show("home");
 $("saveBtn").onclick=()=>{
   const amt=Number($("amount").value);
   if(!amt)return;
+  const type=$("tabIncome").classList.contains("active")?"income":"expenses";
   entries.push({
-    id: crypto.randomUUID(),   // SAFE ID
-    type:$("tabIncome").classList.contains("active")?"income":"expenses",
+    type,
     amount:amt,
     category:$("category").value||WORDS[lang].other,
     note:$("note").value||"",
@@ -346,16 +350,15 @@ $("saveBtn").onclick=()=>{
   localStorage.setItem("senti",JSON.stringify(entries));
   $("amount").value=$("category").value=$("note").value="";
   show("home");
-  filter="expenses";
-  renderHome();
+  setHomeFilter("expenses");
 };
 
 $("tabIncome").onclick=()=>{ $("tabIncome").classList.add("active");$("tabExpenses").classList.remove("active"); };
 $("tabExpenses").onclick=()=>{ $("tabExpenses").classList.add("active");$("tabIncome").classList.remove("active"); };
 
 applyLang();
-renderHome();
+setHomeFilter("expenses");
 </script>
 
 </body>
-          </html>
+    </html>
